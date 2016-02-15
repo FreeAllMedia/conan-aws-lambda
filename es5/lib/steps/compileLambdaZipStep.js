@@ -61,7 +61,6 @@ function compileLambdaZipStep(conan, context, stepDone) {
 
 	var lambdaZip = (0, _archiver2.default)("zip", {});
 
-	console.log("checking existence of ", { handlerFilePath: handlerFilePath });
 	if (fileSystem.existsSync(handlerFilePath)) {
 		conanAwsLambda.filePath(handlerFilePath);
 
