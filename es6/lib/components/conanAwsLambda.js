@@ -37,6 +37,10 @@ export default class ConanAwsLambda extends ConanComponent {
 			"alias"
 		);
 
+		/**
+		 * DEFAULT VALUES
+		 */
+
 		this.name(name);
 		this.filePath(filePath);
 		this.role(role);

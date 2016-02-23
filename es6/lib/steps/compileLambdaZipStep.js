@@ -8,8 +8,17 @@ import Async from "flowsync";
 import hacher from "hacher";
 import { isClass } from "proven";
 
-function buildZipPath(fullPath, basePath) {
-	return path.normalize(fullPath).replace(`${path.normalize(basePath)}/`, "");
+function relativePath(fullPath, basePath) {
+	const normalizedFullPath = path.normalize(fullPath);
+
+	if (basePath.substr(-1) !== "/") {
+		basePath = `${basePath}/`;
+	}
+
+	const normalizedBasePath = path.normalize(basePath);
+	const normalizedRelativePath = normalizedFullPath.replace(`${normalizedBasePath}`, "");
+
+	return normalizedRelativePath;
 }
 
 export default function compileLambdaZipStep(conan, context, stepDone) {
@@ -37,7 +46,7 @@ export default function compileLambdaZipStep(conan, context, stepDone) {
 
 		lambdaZip.append(lambdaReadStream, {name: lambdaFileName});
 	} else {
-		const lambdaFilePath = buildZipPath(conanAwsLambda.filePath(), conan.config.basePath);
+		const lambdaFilePath = relativePath(conanAwsLambda.filePath(), conan.config.basePath);
 		const lambdaModule = require(conanAwsLambda.filePath());
 		const isClassLambda = isClass(lambdaModule).result;
 
@@ -78,11 +87,13 @@ export default function compileLambdaZipStep(conan, context, stepDone) {
 
 		function appendDependencyGlob(dependency, callback) {
 			const dependencyGlob = dependency[0];
-			const dependencyZipPath = dependency[1];
+			const dependencyOptions = dependency[1] || {};
+			const dependencyZipPath = dependencyOptions.zipPath || "";
+			const dependencyBasePath = dependencyOptions.basePath || conan.config.basePath;
 
 			glob(dependencyGlob, (error, filePaths) => {
 				filePaths.forEach((filePath) => {
-					addPathToZip(filePath, dependencyZipPath);
+					addPathToZip(filePath, dependencyBasePath, dependencyZipPath);
 				});
 				callback();
 			});
@@ -113,17 +124,16 @@ export default function compileLambdaZipStep(conan, context, stepDone) {
 		}
 	}
 
-	function addPathToZip(filePath, relativeZipPath) {
+	function addPathToZip(filePath, basePath, zipPath) {
 		const fileStats = fileSystem.statSync(filePath);
 		const isDirectory = fileStats.isDirectory();
 
-		let relativeFilePath;
-		let finalFilePath = buildZipPath(filePath, conan.config.basePath);
+		let relativeFilePath = relativePath(filePath, basePath);
 
-		if (relativeZipPath) {
-			relativeFilePath = `${relativeZipPath}/${finalFilePath}`;
+		if (zipPath) {
+			relativeFilePath = `${zipPath}/${relativeFilePath}`;
 		} else {
-			relativeFilePath = finalFilePath;
+			relativeFilePath = relativeFilePath;
 		}
 
 		if (!isDirectory) {

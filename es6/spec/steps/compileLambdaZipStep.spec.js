@@ -23,7 +23,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 
 	beforeEach(done => {
 		conan = new Conan({
-			basePath: `${__dirname}/../..`,
+			basePath: `${__dirname}/../../`,
 			region: "us-east-1"
 		});
 
@@ -75,7 +75,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 		fileSystem.existsSync(stepReturnData.lambdaZipFilePath).should.be.true;
 	});
 
-	describe("(Multiple dependency file)", () => {
+	describe("(With Dependencies)", () => {
 		beforeEach(done => {
 			// Testing that glob matching works.
 			// If glob matching works normal paths will, too.
@@ -87,8 +87,9 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 					`${fixturesDirectoryPath}/**/s*e.js`
 				],
 				[
-					`${fixturesDirectoryPath}/**/d*y.js`,
-					"lib"
+					`${fixturesDirectoryPath}/**/d*y.js`,	{
+						zipPath: "lib"
+					}
 				],
 				[
 					`${fixturesDirectoryPath}/emptyDirectory`
@@ -97,11 +98,15 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 					`${fixturesDirectoryPath}/directory/file.js`
 				],
 				[
-					__dirname + "/../../lib/conanAwsLambdaPlugin.js"
+					`${__dirname}/../../lib/conanAwsLambdaPlugin.js`, {
+						basePath: `${__dirname}/../..`
+					}
 				],
 				[
-					__dirname + "/../../lib/conanAwsLambdaPlugin.js",
-					"dist"
+					`${__dirname}/../../lib/conanAwsLambdaPlugin.js`, {
+						basePath: `${__dirname}/../../`,
+						zipPath: "dist"
+					}
 				]
 			];
 
