@@ -2,7 +2,7 @@ import ConanAwsLambda from "../../lib/components/conanAwsLambda.js";
 import Conan, { ConanComponent } from "conan";
 import inflect from "jargon";
 
-describe("ConanAwsLambda(conan, name, filePath, role)", () => {
+describe("ConanAwsLambda(conan, name)", () => {
 	let lambda;
 	let name;
 	let filePath;
@@ -15,7 +15,8 @@ describe("ConanAwsLambda(conan, name, filePath, role)", () => {
 		role = "SomeRole";
 
 		conan = new Conan();
-		lambda = new ConanAwsLambda(conan, name, filePath, role);
+		lambda = new ConanAwsLambda(conan, name);
+		lambda.filePath(filePath).role(role);
 	});
 
 	it("should extend ConanComponent", () => {
@@ -28,14 +29,6 @@ describe("ConanAwsLambda(conan, name, filePath, role)", () => {
 
 	it("should save name to .name()", () => {
 		lambda.name().should.eql(name);
-	});
-
-	it("should save filePath to .filePath()", () => {
-		lambda.filePath().should.eql(filePath);
-	});
-
-	it("should save role to .role()", () => {
-		lambda.role().should.eql(role);
 	});
 
 	describe("(parameters)", () => {

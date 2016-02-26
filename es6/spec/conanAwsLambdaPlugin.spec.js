@@ -3,6 +3,7 @@ import ConanAwsLambda from "../lib/components/conanAwsLambda.js";
 import ConanAwsLambdaPlugin from "../lib/conanAwsLambdaPlugin.js";
 import sinon from "sinon";
 import AWS from "aws-sdk";
+import Akiro from "akiro";
 
 describe("ConanAwsLambdaPlugin(conan)", () => {
 	let conan;
@@ -44,11 +45,15 @@ describe("ConanAwsLambdaPlugin(conan)", () => {
 		conan.lambdas.should.eql({});
 	});
 
-	describe("(AWS)", () => {
+	describe("(Libraries)", () => {
 		before(() => {
 			conan = new Conan();
 			conan.steps.constructor.prototype.library = sinon.spy(conan.steps.constructor.prototype.library);
 			conan.use(ConanAwsLambdaPlugin);
+		});
+
+		it("should add the Akiro library", () => {
+			conan.steps.library.calledWith("Akiro", Akiro).should.be.true;
 		});
 
 		it("should add the AWS library", () => {
@@ -59,15 +64,11 @@ describe("ConanAwsLambdaPlugin(conan)", () => {
 	describe("conan.lambda(name, handlerPath)", () => {
 		let lambda;
 		let name;
-		let filePath;
-		let handler;
 
 		beforeEach(() => {
 			name = "AccountCreate";
-			filePath = "/account/create";
-			handler = "handler";
 
-			lambda = conan.lambda(name, filePath, handler);
+			lambda = conan.lambda(name);
 		});
 
 		it("should return an instance of ConanAwsLambda", () => {
@@ -80,14 +81,6 @@ describe("ConanAwsLambdaPlugin(conan)", () => {
 
 		it("should pass the lambda name to the ConanAwsLambda constructor", () => {
 			lambda.name().should.eql(name);
-		});
-
-		it("should pass the lambda file path to the ConanAwsLambda constructor", () => {
-			lambda.filePath().should.eql(filePath);
-		});
-
-		it("should pass the lambda handler to the ConanAwsLambda constructor", () => {
-			lambda.handler().should.eql([handler]);
 		});
 	});
 });

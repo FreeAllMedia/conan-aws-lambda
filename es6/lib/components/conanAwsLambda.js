@@ -1,4 +1,5 @@
 import { ConanComponent } from "conan";
+
 import findLambdaByNameStep from "../steps/findLambdaByNameStep.js";
 import findRoleByNameStep from "../steps/findRoleByNameStep.js";
 import createRoleStep from "../steps/createRoleStep.js";
@@ -12,7 +13,7 @@ import createLambdaAliasStep from "../steps/createLambdaAliasStep.js";
 import updateLambdaAliasStep from "../steps/updateLambdaAliasStep.js";
 
 export default class ConanAwsLambda extends ConanComponent {
-	initialize(conan, name, filePath, role) {
+	initialize(conan, name) {
 		this.conan = conan;
 
 		this.parameters(
@@ -42,8 +43,6 @@ export default class ConanAwsLambda extends ConanComponent {
 		 */
 
 		this.name(name);
-		this.filePath(filePath);
-		this.role(role);
 
 		this.handler("handler");
 		this.runtime("nodejs");

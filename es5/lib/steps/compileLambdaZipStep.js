@@ -41,8 +41,17 @@ var _proven = require("proven");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function buildZipPath(fullPath, basePath) {
-	return _path2.default.normalize(fullPath).replace(_path2.default.normalize(basePath) + "/", "");
+function relativePath(fullPath, basePath) {
+	var normalizedFullPath = _path2.default.normalize(fullPath);
+
+	if (basePath.substr(-1) !== "/") {
+		basePath = basePath + "/";
+	}
+
+	var normalizedBasePath = _path2.default.normalize(basePath);
+	var normalizedRelativePath = normalizedFullPath.replace("" + normalizedBasePath, "");
+
+	return normalizedRelativePath;
 }
 
 function compileLambdaZipStep(conan, context, stepDone) {
@@ -70,7 +79,7 @@ function compileLambdaZipStep(conan, context, stepDone) {
 
 		lambdaZip.append(lambdaReadStream, { name: lambdaFileName });
 	} else {
-		var lambdaFilePath = buildZipPath(conanAwsLambda.filePath(), conan.config.basePath);
+		var lambdaFilePath = relativePath(conanAwsLambda.filePath(), conan.config.basePath);
 		var lambdaModule = require(conanAwsLambda.filePath());
 		var isClassLambda = (0, _proven.isClass)(lambdaModule).result;
 
@@ -108,11 +117,13 @@ function compileLambdaZipStep(conan, context, stepDone) {
 
 		function appendDependencyGlob(dependency, callback) {
 			var dependencyGlob = dependency[0];
-			var dependencyZipPath = dependency[1];
+			var dependencyOptions = dependency[1] || {};
+			var dependencyZipPath = dependencyOptions.zipPath || "";
+			var dependencyBasePath = dependencyOptions.basePath || conan.config.basePath;
 
 			(0, _glob2.default)(dependencyGlob, function (error, filePaths) {
 				filePaths.forEach(function (filePath) {
-					addPathToZip(filePath, dependencyZipPath);
+					addPathToZip(filePath, dependencyBasePath, dependencyZipPath);
 				});
 				callback();
 			});
@@ -140,17 +151,16 @@ function compileLambdaZipStep(conan, context, stepDone) {
 		}
 	}
 
-	function addPathToZip(filePath, relativeZipPath) {
+	function addPathToZip(filePath, basePath, zipPath) {
 		var fileStats = fileSystem.statSync(filePath);
 		var isDirectory = fileStats.isDirectory();
 
-		var relativeFilePath = undefined;
-		var finalFilePath = buildZipPath(filePath, conan.config.basePath);
+		var relativeFilePath = relativePath(filePath, basePath);
 
-		if (relativeZipPath) {
-			relativeFilePath = relativeZipPath + "/" + finalFilePath;
+		if (zipPath) {
+			relativeFilePath = zipPath + "/" + relativeFilePath;
 		} else {
-			relativeFilePath = finalFilePath;
+			relativeFilePath = relativeFilePath;
 		}
 
 		if (!isDirectory) {

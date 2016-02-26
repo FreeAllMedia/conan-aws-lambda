@@ -31,8 +31,8 @@ var ConanAwsLambdaPlugin = function () {
 
 	_createClass(ConanAwsLambdaPlugin, [{
 		key: "lambda",
-		value: function lambda(name, filePath, handlerName) {
-			return new _conanAwsLambda2.default(this, name, filePath, handlerName);
+		value: function lambda(name) {
+			return new _conanAwsLambda2.default(this, name);
 		}
 	}]);
 

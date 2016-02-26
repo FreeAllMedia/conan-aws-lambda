@@ -14,7 +14,7 @@ var _jargon2 = _interopRequireDefault(_jargon);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-describe("ConanAwsLambda(conan, name, filePath, role)", function () {
+describe("ConanAwsLambda(conan, name)", function () {
 	var lambda = undefined;
 	var name = undefined;
 	var filePath = undefined;
@@ -27,7 +27,8 @@ describe("ConanAwsLambda(conan, name, filePath, role)", function () {
 		role = "SomeRole";
 
 		conan = new _conan2.default();
-		lambda = new _conanAwsLambda2.default(conan, name, filePath, role);
+		lambda = new _conanAwsLambda2.default(conan, name);
+		lambda.filePath(filePath).role(role);
 	});
 
 	it("should extend ConanComponent", function () {
@@ -40,14 +41,6 @@ describe("ConanAwsLambda(conan, name, filePath, role)", function () {
 
 	it("should save name to .name()", function () {
 		lambda.name().should.eql(name);
-	});
-
-	it("should save filePath to .filePath()", function () {
-		lambda.filePath().should.eql(filePath);
-	});
-
-	it("should save role to .role()", function () {
-		lambda.role().should.eql(role);
 	});
 
 	describe("(parameters)", function () {

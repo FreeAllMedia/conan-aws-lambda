@@ -71,7 +71,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 
 	_createClass(ConanAwsLambda, [{
 		key: "initialize",
-		value: function initialize(conan, name, filePath, role) {
+		value: function initialize(conan, name) {
 			this.conan = conan;
 
 			this.parameters("name", "filePath", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages");
@@ -80,9 +80,11 @@ var ConanAwsLambda = function (_ConanComponent) {
 
 			this.multipleValueAggregateParameters("dependencies", "alias");
 
+			/**
+    * DEFAULT VALUES
+    */
+
 			this.name(name);
-			this.filePath(filePath);
-			this.role(role);
 
 			this.handler("handler");
 			this.runtime("nodejs");

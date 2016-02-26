@@ -47,16 +47,9 @@ export default function compileLambdaZipStep(conan, context, stepDone) {
 		lambdaZip.append(lambdaReadStream, {name: lambdaFileName});
 	} else {
 		const lambdaFilePath = relativePath(conanAwsLambda.filePath(), conan.config.basePath);
-		const lambdaModule = require(conanAwsLambda.filePath());
-		const isClassLambda = isClass(lambdaModule).result;
 
-		let conanHandlerContent;
+		const conanHandlerContent = `module.exports = {\n\t${handlerName}: require("./${lambdaFilePath}").${handlerName}\n};\n`;
 
-		if (isClassLambda) {
-			conanHandlerContent = `function requireDefault(fileName) {\n\tvar object = require(fileName);\n\tif (object && object.__esModule) {\n\t\treturn object;\n\t} else {\n\t\treturn { "default": object };\n\t}\n}\n\nvar LambdaClass = requireDefault("./${lambdaFilePath}").default;\n\nmodule.exports = {\n\t${handlerName}: function classHandler(event, context) {\n\t\tvar lambdaClass = new LambdaClass(event, context);\n\t\tlambdaClass.${handlerName}(event, context);\n\t}\n};\n`;
-		} else {
-			conanHandlerContent = `module.exports = {\n\t${handlerName}: require("./${lambdaFilePath}").${handlerName}\n};\n`;
-		}
 		const conanHandlerFileName = `conanHandler-${hacher.getUUID()}.js`;
 
 		conanAwsLambda.filePath(conanHandlerFileName);

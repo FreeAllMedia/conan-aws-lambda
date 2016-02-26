@@ -5,47 +5,19 @@ export default function buildPackageStep(conan, context, stepDone) {
 	const conanAwsLambda = context.parameters;
 
 	if (conanAwsLambda.packages() !== undefined) {
-		const AWS = context.libraries.AWS;
-
-		const lambda = new AWS.Lambda({
-			region: conan.config.region
-		});
-
-		const s3 = new AWS.S3({
-			region: conan.config.region
-		});
-
 		const lambdaName = conanAwsLambda.name();
 		const packageZipFileName = `${inflect(lambdaName).camel.toString()}.packages.zip`;
+		const packageZipFilePath = `${context.temporaryDirectoryPath}/${packageZipFileName}`;
 
-		const parameters = {
-			FunctionName: "Thaumaturgy",
-			InvocationType: "RequestResponse",
-			LogType: "Tail",
-			Payload: JSON.stringify({
-				packages: context.parameters.packages(),
-				bucket: conan.config.bucket,
-				key: packageZipFileName
-			})
-		};
+		const akiro = new context.libraries.Akiro({
+			region: conan.config.region,
+			bucket: conan.config.bucket
+		});
 
-		lambda.invoke(parameters, (error) => {
-			const packageZipReadStream = s3.getObject({
-				Bucket: conan.config.bucket,
-				Key: packageZipFileName
-			}).createReadStream();
+		akiro.package(conanAwsLambda.packages(), context.)
 
-			const packageZipFilePath = `${context.temporaryDirectoryPath}/${packageZipFileName}`;
-
-			const packageZipWriteStream = fileSystem.createWriteStream(packageZipFilePath);
-
-			packageZipWriteStream.on("close", () => {
-				stepDone(null, {
-					packageZipFilePath: packageZipFilePath
-				});
-			});
-
-			packageZipReadStream.pipe(packageZipWriteStream);
+		stepDone(null, {
+			packageZipFilePath: packageZipFilePath
 		});
 	} else {
 		stepDone(null, {

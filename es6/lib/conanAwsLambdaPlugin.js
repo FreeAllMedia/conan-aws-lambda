@@ -1,5 +1,6 @@
 import ConanAwsLambda from "./components/conanAwsLambda.js";
 import AWS from "aws-sdk";
+import Akiro from "akiro";
 
 export default class ConanAwsLambdaPlugin {
 	constructor (conan) {
@@ -8,9 +9,10 @@ export default class ConanAwsLambdaPlugin {
 		conan.lambdas = {};
 		conan.lambda = this.lambda;
 		conan.steps.library("AWS", AWS);
+		conan.steps.library("Akiro", Akiro);
 	}
 
-	lambda(name, filePath, handlerName) {
-		return new ConanAwsLambda(this, name, filePath, handlerName);
+	lambda(name) {
+		return new ConanAwsLambda(this, name);
 	}
 }
