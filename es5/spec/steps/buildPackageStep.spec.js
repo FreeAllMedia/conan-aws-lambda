@@ -2,8 +2,6 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _conan = require("conan");
 
 var _conan2 = _interopRequireDefault(_conan);
@@ -42,58 +40,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 _temp2.default.track();
 
-describe(".buildPackageStep(conan, context, stepDone)", function () {
+xdescribe(".buildPackageStep(conan, context, stepDone)", function () {
 	var conan = undefined,
+	    conanAwsLambda = undefined,
 	    context = undefined,
 	    stepDone = undefined,
-	    lambdaResponseError = undefined,
-	    lambdaResponseData = undefined,
-	    s3ResponseError = undefined,
-	    s3ResponseData = undefined,
 	    stepReturnError = undefined,
 	    stepReturnData = undefined,
-	    conanAwsLambda = undefined,
-	    mockLambdaSpy = undefined,
-	    mockS3Spy = undefined,
+	    mockAkiroConstructorSpy = undefined,
 	    _packages = undefined,
 	    packageZipFileName = undefined;
-
-	var mockS3GetObjectRequest = {
-		createReadStream: function createReadStream() {
-			return _fs2.default.createReadStream(__dirname + "/../fixtures/packages.zip");
-		}
-	};
-
-	var mockS3 = {
-		getObject: _sinon2.default.spy(function () {
-			return mockS3GetObjectRequest;
-		})
-	};
-
-	var MockS3 = function MockS3(config) {
-		_classCallCheck(this, MockS3);
-
-		mockS3Spy(config);
-		return mockS3;
-	};
-
-	var mockLambda = {
-		invoke: _sinon2.default.spy(function (params, callback) {
-			callback(lambdaResponseError, lambdaResponseData);
-		})
-	};
-
-	var MockLambda = function MockLambda(config) {
-		_classCallCheck(this, MockLambda);
-
-		mockLambdaSpy(config);
-		return mockLambda;
-	};
-
-	var MockAWS = {
-		S3: MockS3,
-		Lambda: MockLambda
-	};
 
 	beforeEach(function (done) {
 		conan = new _conan2.default({
@@ -101,46 +57,48 @@ describe(".buildPackageStep(conan, context, stepDone)", function () {
 			bucket: "some-bucket-here"
 		});
 
-		var lambdaName = "TestFunction";
+		_packages = {
+			"async": "1.0.0",
+			"temp": "0.8.3"
+		};
+
+		conanAwsLambda = {
+			name: function name() {
+				return "MyLambda";
+			},
+			packages: function packages() {
+				return _packages;
+			}
+		};
+
+		var lambdaName = conanAwsLambda.name();
 
 		packageZipFileName = (0, _jargon2.default)(lambdaName).camel.toString() + ".packages.zip";
 
-		_packages = { "async": "1.0.0" };
+		mockAkiroConstructorSpy = _sinon2.default.spy();
 
-		conanAwsLambda = new (function () {
-			function MockConanAwsLambda() {
-				_classCallCheck(this, MockConanAwsLambda);
+		var MockAkiro = function MockAkiro() {
+			_classCallCheck(this, MockAkiro);
+
+			for (var _len = arguments.length, options = Array(_len), _key = 0; _key < _len; _key++) {
+				options[_key] = arguments[_key];
 			}
 
-			_createClass(MockConanAwsLambda, [{
-				key: "name",
-				value: function name() {
-					return lambdaName;
-				}
-			}, {
-				key: "packages",
-				value: function packages() {
-					return _packages;
-				}
-			}]);
+			mockAkiroConstructorSpy(options);
+		};
 
-			return MockConanAwsLambda;
-		}())();
-
-		mockLambdaSpy = _sinon2.default.spy();
-		mockS3Spy = _sinon2.default.spy();
+		MockAkiro.prototype.package = _sinon2.default.spy(function (packagesAndVersions, outputDirectory, callback) {
+			//fileSystem.copySync("../fixtures/")
+			callback(null);
+		});
 
 		_temp2.default.mkdir("compilePackages", function (error, temporaryDirectoryPath) {
 			context = {
 				temporaryDirectoryPath: temporaryDirectoryPath,
 				parameters: conanAwsLambda,
-				libraries: { AWS: MockAWS },
+				libraries: { Akiro: MockAkiro },
 				results: {}
 			};
-
-			// "Lambda Found" response by default
-			lambdaResponseData = {};
-			lambdaResponseError = null;
 
 			stepDone = function stepDone(afterStepCallback) {
 				return function (callbackError, data) {
@@ -162,39 +120,14 @@ describe(".buildPackageStep(conan, context, stepDone)", function () {
 		(typeof _buildPackageStep2.default === "undefined" ? "undefined" : _typeof(_buildPackageStep2.default)).should.equal("function");
 	});
 
+	it("should configure akiro with the designated parameters", function () {
+		mockAkiroConstructorSpy.firstCall.args.should.eql({
+			region: conan.config.region,
+			bucket: conan.config.bucket
+		});
+	});
+
 	describe("(When packages are set to be compiled)", function () {
-		it("should set the designated region on the lambda client", function () {
-			mockLambdaSpy.calledWith({
-				region: conan.config.region
-			}).should.be.true;
-		});
-
-		it("should set the designated region on the s3 client", function () {
-			mockS3Spy.calledWith({
-				region: conan.config.region
-			}).should.be.true;
-		});
-
-		it("should call AWS with the designated lambda parameters", function () {
-			mockLambda.invoke.firstCall.args[0].should.eql({
-				FunctionName: "Thaumaturgy",
-				InvocationType: "RequestResponse",
-				LogType: "Tail",
-				Payload: JSON.stringify({
-					packages: conanAwsLambda.packages(),
-					bucket: conan.config.bucket,
-					key: packageZipFileName
-				})
-			});
-		});
-
-		it("should call AWS with the designated S3 parameters", function () {
-			mockS3.getObject.firstCall.args[0].should.eql({
-				Bucket: conan.config.bucket,
-				Key: packageZipFileName
-			});
-		});
-
 		it("should have all package files within the package zip", function (done) {
 			/* eslint-disable new-cap */
 			var zipFilePaths = [];

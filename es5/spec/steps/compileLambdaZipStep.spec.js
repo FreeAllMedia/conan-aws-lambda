@@ -134,20 +134,6 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", function () {
 			(0, _compileLambdaZipStep2.default)(conan, context, stepDone(done));
 		});
 
-		it("should create a conan handler on the root of the zipFile", function (done) {
-			/* eslint-disable new-cap */
-			var zipFilePaths = [];
-
-			_fs2.default.createReadStream(stepReturnData.lambdaZipFilePath).pipe(_unzip2.default.Parse()).on("entry", function (entry) {
-				if (entry.path.match(/conanHandler\-[a-zA-Z0-9.]*/)) {
-					zipFilePaths.push(entry.path);
-				}
-			}).on("close", function () {
-				zipFilePaths.length.should.equal(1);
-				done();
-			});
-		});
-
 		it("should generate the conan handler on the root of the zipFile", function (done) {
 			/* eslint-disable new-cap */
 			var zipFilePaths = [];

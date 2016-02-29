@@ -23,7 +23,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 
 	beforeEach(done => {
 		conan = new Conan({
-			basePath: `${__dirname}/../..`,
+			basePath: `${__dirname}/../../`,
 			region: "us-east-1"
 		});
 
@@ -75,7 +75,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 		fileSystem.existsSync(stepReturnData.lambdaZipFilePath).should.be.true;
 	});
 
-	describe("(Multiple dependency file)", () => {
+	describe("(With Dependencies)", () => {
 		beforeEach(done => {
 			// Testing that glob matching works.
 			// If glob matching works normal paths will, too.
@@ -84,11 +84,12 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 
 			dependencyFilePaths = [
 				[
-					`${fixturesDirectoryPath}/**/s*e.js`
+					`${fixturesDirectoryPath}/s*e.js`
 				],
 				[
-					`${fixturesDirectoryPath}/**/d*y.js`,
-					"lib"
+					`${fixturesDirectoryPath}/d*y.js`,	{
+						zipPath: "lib"
+					}
 				],
 				[
 					`${fixturesDirectoryPath}/emptyDirectory`
@@ -97,32 +98,19 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 					`${fixturesDirectoryPath}/directory/file.js`
 				],
 				[
-					__dirname + "/../../lib/conanAwsLambdaPlugin.js"
+					`${__dirname}/../../lib/conanAwsLambdaPlugin.js`, {
+						basePath: `${__dirname}/../..`
+					}
 				],
 				[
-					__dirname + "/../../lib/conanAwsLambdaPlugin.js",
-					"dist"
+					`${__dirname}/../../lib/conanAwsLambdaPlugin.js`, {
+						basePath: `${__dirname}/../../`,
+						zipPath: "dist"
+					}
 				]
 			];
 
 			compileLambdaZipStep(conan, context, stepDone(done));
-		});
-
-		it("should create a conan handler on the root of the zipFile", done => {
-			/* eslint-disable new-cap */
-			let zipFilePaths = [];
-
-			fileSystem.createReadStream(stepReturnData.lambdaZipFilePath)
-				.pipe(unzip.Parse())
-				.on("entry", (entry) => {
-					if(entry.path.match(/conanHandler\-[a-zA-Z0-9.]*/)) {
-						zipFilePaths.push(entry.path);
-					}
-				})
-				.on("close", () => {
-					zipFilePaths.length.should.equal(1);
-					done();
-				});
 		});
 
 		it("should generate the conan handler on the root of the zipFile", done => {
@@ -159,12 +147,12 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 				})
 				.on("close", () => {
 					const expectedFilePaths = [
+						"spec/fixtures/save.js",
+						"lib/spec/fixtures/destroy.js",
 						"spec/fixtures/emptyDirectory/",
 						"spec/fixtures/directory/file.js",
 						"lib/conanAwsLambdaPlugin.js",
-						"dist/lib/conanAwsLambdaPlugin.js",
-						"spec/fixtures/save.js",
-						"lib/spec/fixtures/destroy.js"
+						"dist/lib/conanAwsLambdaPlugin.js"
 					];
 
 					zipFilePaths.should.eql(expectedFilePaths);

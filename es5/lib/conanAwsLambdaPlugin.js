@@ -14,6 +14,10 @@ var _awsSdk = require("aws-sdk");
 
 var _awsSdk2 = _interopRequireDefault(_awsSdk);
 
+var _akiro = require("akiro");
+
+var _akiro2 = _interopRequireDefault(_akiro);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27,6 +31,7 @@ var ConanAwsLambdaPlugin = function () {
 		conan.lambdas = {};
 		conan.lambda = this.lambda;
 		conan.steps.library("AWS", _awsSdk2.default);
+		conan.steps.library("Akiro", _akiro2.default);
 	}
 
 	_createClass(ConanAwsLambdaPlugin, [{
