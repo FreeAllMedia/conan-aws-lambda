@@ -1,0 +1,97 @@
+{
+  "name": "flowsync",
+  "version": "0.1.12",
+  "description": "An ES6 flow control component.",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeAllMedia/flowsync.git"
+  },
+  "keywords": [
+    "flow",
+    "async",
+    "sync"
+  ],
+  "author": {
+    "name": "Free All Media"
+  },
+  "contributors": [
+    {
+      "name": "nicosommi",
+      "email": "nicosommi@gmail.com"
+    },
+    {
+      "name": "dcrockwell",
+      "email": "dcautomates@gmail.com"
+    },
+    {
+      "name": "paulgoggin",
+      "email": "pgoggin@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FreeAllMedia/flowsync/issues"
+  },
+  "homepage": "https://github.com/FreeAllMedia/flowsync",
+  "dependencies": {
+    "async": "^1.2.1"
+  },
+  "devDependencies": {
+    "babel": "^5.5.6",
+    "babel-eslint": "^4.0.5",
+    "chai": "^3.0.0",
+    "coveralls": "^2.11.2",
+    "eslint": "^1.1.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-istanbul": "^0.10.0",
+    "gulp-mocha": "^2.1.1",
+    "gulp-util": "^3.0.6",
+    "karma": "^0.12.36",
+    "karma-browserify": "^4.2.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.1.12",
+    "karma-detect-browsers": "^2.0.0",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-mocha": "^0.1.10",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "karma-safari-launcher": "^0.1.1",
+    "karma-sauce-launcher": "^0.2.11",
+    "mocha": "^2.2.5",
+    "phantomjs": "^1.9.17",
+    "sinon": "^1.15.3",
+    "superstack": "0.0.4"
+  },
+  "generatorVersion": "0.2.20",
+  "gitHead": "40aef05a5aad1ad2c009b02468e32460c4559474",
+  "_id": "flowsync@0.1.12",
+  "_shasum": "a6515d60f4d6fec2f89817b1bc7dffb94a6f558f",
+  "_from": "flowsync@0.1.12",
+  "_npmVersion": "3.5.2",
+  "_nodeVersion": "4.2.1",
+  "_npmUser": {
+    "name": "fam",
+    "email": "fam-operations@freeallmedia.com"
+  },
+  "dist": {
+    "shasum": "a6515d60f4d6fec2f89817b1bc7dffb94a6f558f",
+    "tarball": "http://registry.npmjs.org/flowsync/-/flowsync-0.1.12.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "nicosommi",
+      "email": "nicosommi@gmail.com"
+    },
+    {
+      "name": "fam",
+      "email": "fam-operations@freeallmedia.com"
+    }
+  ],
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/flowsync/-/flowsync-0.1.12.tgz",
+  "readme": "ERROR: No README data found!"
+}

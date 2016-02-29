@@ -52,6 +52,10 @@ var _updateLambdaAliasStep = require("../steps/updateLambdaAliasStep.js");
 
 var _updateLambdaAliasStep2 = _interopRequireDefault(_updateLambdaAliasStep);
 
+var _validateLambdaStep = require("../steps/validateLambdaStep.js");
+
+var _validateLambdaStep2 = _interopRequireDefault(_validateLambdaStep);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -92,6 +96,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 			this.timeout(3);
 
 			// attach steps to conan
+			this.conan.steps.add(_validateLambdaStep2.default, this);
 			this.conan.steps.add(_findLambdaByNameStep2.default, this);
 			this.conan.steps.add(_findRoleByNameStep2.default, this);
 			this.conan.steps.add(_createRoleStep2.default, this);

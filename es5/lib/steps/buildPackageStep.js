@@ -26,7 +26,7 @@ function buildPackageStep(conan, context, stepDone) {
 		(function () {
 			var lambdaName = conanAwsLambda.name();
 			var packageZipFileName = (0, _jargon2.default)(lambdaName).camel.toString() + ".packages.zip";
-			var packageZipFilePath = context.temporaryDirectoryPath + "/" + packageZipFileName;
+			var packageZipFilePath = context.temporaryDirectoryPath + "/zip/" + packageZipFileName;
 
 			var akiro = new context.libraries.Akiro({
 				region: conan.config.region,

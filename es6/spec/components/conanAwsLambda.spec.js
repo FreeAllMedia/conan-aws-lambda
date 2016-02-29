@@ -120,6 +120,11 @@ describe("ConanAwsLambda(conan, name)", () => {
 	});
 
 	describe("(steps)", () => {
+		it("should add a validate lambda step", () => {
+			const step = conan.steps.findByName("validateLambda");
+			step.parameters.should.eql(lambda);
+		});
+
 		it("should add a find lambda by name step", () => {
 			const step = conan.steps.findByName("findLambdaByNameStep");
 			step.parameters.should.eql(lambda);

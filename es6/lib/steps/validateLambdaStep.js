@@ -1,4 +1,4 @@
-export default function validateLambda(conan, context, stepDone) {
+export default function validateLambdaStep(conan, context, stepDone) {
 	const conanAwsLambda = context.parameters;
 	if (conanAwsLambda.role() === undefined) {
 		const error = new Error(".role() is a required parameter for a lambda.");

@@ -11,6 +11,7 @@ import publishLambdaVersionStep from "../steps/publishLambdaVersionStep.js";
 import findLambdaAliasStep from "../steps/findLambdaAliasStep.js";
 import createLambdaAliasStep from "../steps/createLambdaAliasStep.js";
 import updateLambdaAliasStep from "../steps/updateLambdaAliasStep.js";
+import validateLambdaStep from "../steps/validateLambdaStep.js";
 
 export default class ConanAwsLambda extends ConanComponent {
 	initialize(conan, name) {
@@ -50,6 +51,7 @@ export default class ConanAwsLambda extends ConanComponent {
 		this.timeout(3);
 
 		// attach steps to conan
+		this.conan.steps.add(validateLambdaStep, this);
 		this.conan.steps.add(findLambdaByNameStep, this);
 		this.conan.steps.add(findRoleByNameStep, this);
 		this.conan.steps.add(createRoleStep, this);

@@ -1,6 +1,6 @@
-import validateLambda from "../../lib/steps/validateLambda.js";
+import validateLambdaStep from "../../lib/steps/validateLambdaStep.js";
 
-describe(".validateLambda(conan, context, stepDone)", () => {
+describe(".validateLambdaStep(conan, context, stepDone)", () => {
 	let conan,
 			context;
 
@@ -17,7 +17,7 @@ describe(".validateLambda(conan, context, stepDone)", () => {
 				role: () => { return "MyIamRoleName"; },
 				packages: () => { return { async: "1.0.0"	}; }
 			};
-			validateLambda(conan, context, stepDone(done));
+			validateLambdaStep(conan, context, stepDone(done));
 		});
 
 		it("should return nothing", () => {
@@ -30,7 +30,7 @@ describe(".validateLambda(conan, context, stepDone)", () => {
 			context.parameters = {
 				role: () => {}
 			};
-			validateLambda(conan, context, stepDone(done));
+			validateLambdaStep(conan, context, stepDone(done));
 		});
 
 		it("should return an error", () => {
@@ -44,7 +44,7 @@ describe(".validateLambda(conan, context, stepDone)", () => {
 				role: () => { return "MyIamRoleName"; },
 				packages: () => { return { async: "1.0.0"	}; }
 			};
-			validateLambda(conan, context, stepDone(done));
+			validateLambdaStep(conan, context, stepDone(done));
 		});
 
 		it("should return an error", () => {
