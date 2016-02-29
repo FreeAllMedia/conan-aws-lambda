@@ -84,10 +84,10 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 
 			dependencyFilePaths = [
 				[
-					`${fixturesDirectoryPath}/**/s*e.js`
+					`${fixturesDirectoryPath}/s*e.js`
 				],
 				[
-					`${fixturesDirectoryPath}/**/d*y.js`,	{
+					`${fixturesDirectoryPath}/d*y.js`,	{
 						zipPath: "lib"
 					}
 				],
@@ -147,12 +147,12 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 				})
 				.on("close", () => {
 					const expectedFilePaths = [
+						"spec/fixtures/save.js",
+						"lib/spec/fixtures/destroy.js",
 						"spec/fixtures/emptyDirectory/",
 						"spec/fixtures/directory/file.js",
 						"lib/conanAwsLambdaPlugin.js",
-						"dist/lib/conanAwsLambdaPlugin.js",
-						"spec/fixtures/save.js",
-						"lib/spec/fixtures/destroy.js"
+						"dist/lib/conanAwsLambdaPlugin.js"
 					];
 
 					zipFilePaths.should.eql(expectedFilePaths);
