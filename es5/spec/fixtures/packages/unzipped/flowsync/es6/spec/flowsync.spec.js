@@ -1,10 +1,12 @@
-const flowsync = require("../lib/flowsync.js");
-const sinon = require("sinon");
+"use strict";
+
+var flowsync = require("../lib/flowsync.js");
+var sinon = require("sinon");
 
 describe("flowsync", function () {
 	"use strict";
 
-	let clock;
+	var clock = undefined;
 
 	beforeEach(function () {
 		clock = sinon.useFakeTimers();
@@ -14,23 +16,20 @@ describe("flowsync", function () {
 		clock.restore();
 	});
 
-	it("should work as a module", () => {
-		const fsync = require("../../index");
+	it("should work as a module", function () {
+		var fsync = require("../../index");
 		(typeof fsync.series === "function").should.be.true;
 	});
 
-	describe("(example usage)", () => {
-		describe("(ES6)", () => {
-			it("should work as expected", done => {
-				flowsync.series([
-					(next) => {
-						//do something
-						setTimeout(next, 1);
-					},
-					(next) => {
-						setTimeout(next, 1);
-					}
-				], (error, results) => {
+	describe("(example usage)", function () {
+		describe("(ES6)", function () {
+			it("should work as expected", function (done) {
+				flowsync.series([function (next) {
+					//do something
+					setTimeout(next, 1);
+				}, function (next) {
+					setTimeout(next, 1);
+				}], function (error, results) {
 					//do something after the series
 					done();
 				});
@@ -39,17 +38,14 @@ describe("flowsync", function () {
 			});
 		});
 
-		describe("(ES5)", () => {
-			it("should work as expected", done => {
-				flowsync.series([
-					function stepOne(next) {
-						//do something
-						setTimeout(next, 1);
-					},
-					function stepTwo(next) {
-						setTimeout(next, 1);
-					}
-				], function finalStep(error, results) {
+		describe("(ES5)", function () {
+			it("should work as expected", function (done) {
+				flowsync.series([function stepOne(next) {
+					//do something
+					setTimeout(next, 1);
+				}, function stepTwo(next) {
+					setTimeout(next, 1);
+				}], function finalStep(error, results) {
 					//do something after the series
 					done();
 				});
@@ -60,11 +56,11 @@ describe("flowsync", function () {
 	});
 
 	describe("flowsync.parallel(functionCollection, callback)", function () {
-		let functionOne,
-				functionTwo,
-				functionThree,
-				functionCollection,
-				callback;
+		var functionOne = undefined,
+		    functionTwo = undefined,
+		    functionThree = undefined,
+		    functionCollection = undefined,
+		    callback = undefined;
 
 		beforeEach(function () {
 
@@ -72,20 +68,16 @@ describe("flowsync", function () {
 			functionTwo = sinon.spy();
 			functionThree = sinon.spy();
 
-			functionCollection = [
-				function (ready) {
-					functionOne();
-					setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
-				},
-				function (ready) {
-					functionTwo();
-					setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
-				},
-				function (ready) {
-					functionThree();
-					setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
-				}
-			];
+			functionCollection = [function (ready) {
+				functionOne();
+				setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
+			}, function (ready) {
+				functionTwo();
+				setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
+			}, function (ready) {
+				functionThree();
+				setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
+			}];
 
 			callback = sinon.spy();
 		});
@@ -108,39 +100,39 @@ describe("flowsync", function () {
 	});
 
 	describe("flowsync.eachParallel(array, iteratorFunction, callback)", function () {
-		let iteratorFunction,
-				itemSpy,
-				items,
-				callback,
-				array;
+		var iteratorFunction = undefined,
+		    itemSpy = undefined,
+		    items = undefined,
+		    callback = undefined,
+		    array = undefined;
 
 		beforeEach(function () {
-			items = [1,2,3];
+			items = [1, 2, 3];
 
-			itemSpy = sinon.spy((item, finish) => {
+			itemSpy = sinon.spy(function (item, finish) {
 				finish();
 			});
 
-			iteratorFunction = function (item, finish) {
+			iteratorFunction = function iteratorFunction(item, finish) {
 				itemSpy(item, finish);
 			};
 
 			callback = sinon.spy();
 		});
 
-		it("should call the function for each item and then the callback", done => {
-			flowsync.eachParallel(items, iteratorFunction, () => {
+		it("should call the function for each item and then the callback", function (done) {
+			flowsync.eachParallel(items, iteratorFunction, function () {
 				sinon.assert.callCount(itemSpy, 3);
 				done();
 			});
 		});
 
-		it("should call the function until an error occurs and then the callback with that error", done => {
-			const errorData = "someerror";
-			itemSpy = sinon.spy((item, finish) => {
+		it("should call the function until an error occurs and then the callback with that error", function (done) {
+			var errorData = "someerror";
+			itemSpy = sinon.spy(function (item, finish) {
 				finish(errorData);
 			});
-			flowsync.eachParallel(items, iteratorFunction, (error) => {
+			flowsync.eachParallel(items, iteratorFunction, function (error) {
 				error.should.eql(errorData);
 				done();
 			});
@@ -148,35 +140,32 @@ describe("flowsync", function () {
 	});
 
 	describe("flowsync.eachSeries(array, iteratorFunction, callback)", function () {
-		let iteratorFunction,
-				itemSpy,
-				items,
-				callback,
-				array;
+		var iteratorFunction = undefined,
+		    itemSpy = undefined,
+		    items = undefined,
+		    callback = undefined,
+		    array = undefined;
 
 		beforeEach(function () {
 			items = [0, 1, 2];
 
-			itemSpy = [sinon.spy((item, finish) => {
-					setTimeout(finish, 1);
-				}),
-				sinon.spy((item, finish) => {
-					setTimeout(finish, 1);
-				}),
-				sinon.spy((item, finish) => {
-					setTimeout(finish, 1);
-				})
-			];
+			itemSpy = [sinon.spy(function (item, finish) {
+				setTimeout(finish, 1);
+			}), sinon.spy(function (item, finish) {
+				setTimeout(finish, 1);
+			}), sinon.spy(function (item, finish) {
+				setTimeout(finish, 1);
+			})];
 
-			iteratorFunction = function (item, finish) {
+			iteratorFunction = function iteratorFunction(item, finish) {
 				itemSpy[item](item, finish);
 			};
 
 			callback = sinon.spy();
 		});
 
-		it("should call the function for each item and then the callback", done => {
-			flowsync.eachSeries(items, iteratorFunction, () => {
+		it("should call the function for each item and then the callback", function (done) {
+			flowsync.eachSeries(items, iteratorFunction, function () {
 				sinon.assert.callOrder(itemSpy[0], itemSpy[1], itemSpy[2]);
 				done();
 			});
@@ -184,12 +173,12 @@ describe("flowsync", function () {
 			clock.tick(5);
 		});
 
-		it("should call the function until an error occurs and then the callback with that error", done => {
-			const errorData = "someerror";
-			itemSpy[1] = sinon.spy((item, finish) => {
+		it("should call the function until an error occurs and then the callback with that error", function (done) {
+			var errorData = "someerror";
+			itemSpy[1] = sinon.spy(function (item, finish) {
 				finish(errorData);
 			});
-			flowsync.eachSeries(items, iteratorFunction, (error) => {
+			flowsync.eachSeries(items, iteratorFunction, function (error) {
 				error.should.eql(errorData);
 				done();
 			});
@@ -199,31 +188,27 @@ describe("flowsync", function () {
 	});
 
 	describe("flowsync.series(functionCollection, callback)", function () {
-		let functionOne,
-				functionTwo,
-				functionThree,
-				functionCollection,
-				callback;
+		var functionOne = undefined,
+		    functionTwo = undefined,
+		    functionThree = undefined,
+		    functionCollection = undefined,
+		    callback = undefined;
 
 		beforeEach(function () {
 			functionOne = sinon.spy();
 			functionTwo = sinon.spy();
 			functionThree = sinon.spy();
 
-			functionCollection = [
-				function (ready) {
-					functionOne();
-					setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
-				},
-				function (ready) {
-					functionTwo();
-					setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
-				},
-				function (ready) {
-					functionThree();
-					setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
-				}
-			];
+			functionCollection = [function (ready) {
+				functionOne();
+				setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
+			}, function (ready) {
+				functionTwo();
+				setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
+			}, function (ready) {
+				functionThree();
+				setTimeout(ready, 100); // Timeout is to determine whether parallel or serial
+			}];
 
 			callback = sinon.spy();
 		});
@@ -255,30 +240,26 @@ describe("flowsync", function () {
 	});
 
 	describe("flowsync.waterfall(functionCollection, callback)", function () {
-		let functionOne,
-				functionTwo,
-				functionThree,
-				functionCollection,
-				callback;
+		var functionOne = undefined,
+		    functionTwo = undefined,
+		    functionThree = undefined,
+		    functionCollection = undefined,
+		    callback = undefined;
 
 		beforeEach(function () {
-			functionOne = sinon.spy((callback) => {
+			functionOne = sinon.spy(function (callback) {
 				callback(null, "1", "2");
 			});
 
-			functionTwo = sinon.spy((argumentOne, argumentTwo, callback) => {
+			functionTwo = sinon.spy(function (argumentOne, argumentTwo, callback) {
 				callback(null, "3");
 			});
 
-			functionThree = sinon.spy((argumentOne, callback) => {
+			functionThree = sinon.spy(function (argumentOne, callback) {
 				callback(null);
 			});
 
-			functionCollection = [
-				functionOne,
-				functionTwo,
-				functionThree
-			];
+			functionCollection = [functionOne, functionTwo, functionThree];
 
 			callback = sinon.spy();
 		});
@@ -312,14 +293,14 @@ describe("flowsync", function () {
 	});
 
 	describe("flowsync.mapParallel(values, iterator, callback)", function () {
-		let values,
-				iterator,
-				iteratorWrapper;
+		var values = undefined,
+		    iterator = undefined,
+		    iteratorWrapper = undefined;
 
 		beforeEach(function () {
 			values = [1, 2, 3];
 			iterator = sinon.spy();
-			iteratorWrapper = function (value, completed) {
+			iteratorWrapper = function iteratorWrapper(value, completed) {
 				iterator(value);
 				setTimeout(completed, 100);
 			};
@@ -340,18 +321,17 @@ describe("flowsync", function () {
 			flowsync.mapParallel(values, iteratorWrapper, done);
 			clock.tick(100);
 		});
-
 	});
 
 	describe("flowsync.mapSeries(values, iterator, callback)", function () {
-		let values,
-				iterator,
-				iteratorWrapper;
+		var values = undefined,
+		    iterator = undefined,
+		    iteratorWrapper = undefined;
 
 		beforeEach(function () {
 			values = [1, 2, 3];
 			iterator = sinon.spy();
-			iteratorWrapper = function (value, completed) {
+			iteratorWrapper = function iteratorWrapper(value, completed) {
 				iterator(value);
 				setTimeout(completed, 100);
 			};

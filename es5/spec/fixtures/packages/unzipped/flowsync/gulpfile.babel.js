@@ -1,10 +1,21 @@
-import "./tasks/suppress-errors.js";
-import "./tasks/build-spec.js";
-import "./tasks/build-spec-assets.js";
-import "./tasks/build-lib.js";
-import "./tasks/build-lib-assets.js";
-import "./tasks/build.js";
-import "./tasks/test-local.js";
-import "./tasks/test-browsers.js";
-import "./tasks/test.js";
-import "./tasks/test-watch.js";
+"use strict";
+
+require("./tasks/suppress-errors.js");
+
+require("./tasks/build-spec.js");
+
+require("./tasks/build-spec-assets.js");
+
+require("./tasks/build-lib.js");
+
+require("./tasks/build-lib-assets.js");
+
+require("./tasks/build.js");
+
+require("./tasks/test-local.js");
+
+require("./tasks/test-browsers.js");
+
+require("./tasks/test.js");
+
+require("./tasks/test-watch.js");

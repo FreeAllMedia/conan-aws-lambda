@@ -1,69 +1,90 @@
-import Conan from "conan";
-import upsertLambdaStep from "../../lib/steps/upsertLambdaStep.js";
-import sinon from "sinon";
-import fileSystem from "fs";
-import temp from "temp";
-import path from "path";
-import inflect from "jargon";
+"use strict";
 
-temp.track();
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-describe(".upsertLambdaStep(conan, context, stepDone)", () => {
-	let conan,
-			context,
-			stepDone,
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-			createFunctionError,
-			createFunctionData,
+var _conan = require("conan");
 
-			updateFunctionCodeError,
-			updateFunctionCodeData,
+var _conan2 = _interopRequireDefault(_conan);
 
-			updateFunctionConfigurationError,
-			updateFunctionConfigurationData,
+var _upsertLambdaStep = require("../../lib/steps/upsertLambdaStep.js");
 
-			stepReturnError,
-			stepReturnData,
+var _upsertLambdaStep2 = _interopRequireDefault(_upsertLambdaStep);
 
-			parameters,
-			lambdaZipFilePath,
-			lambdaFilePath,
+var _sinon = require("sinon");
 
-			roleArn,
-			lambdaArn,
+var _sinon2 = _interopRequireDefault(_sinon);
 
-			mockLambdaSpy,
+var _fs = require("fs");
 
-			createFunctionParameters,
+var _fs2 = _interopRequireDefault(_fs);
 
-			handlerString;
+var _temp = require("temp");
 
-	const mockLambda = {
-		createFunction: sinon.spy((params, callback) => {
+var _temp2 = _interopRequireDefault(_temp);
+
+var _path = require("path");
+
+var _path2 = _interopRequireDefault(_path);
+
+var _jargon = require("jargon");
+
+var _jargon2 = _interopRequireDefault(_jargon);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+_temp2.default.track();
+
+describe(".upsertLambdaStep(conan, context, stepDone)", function () {
+	var conan = undefined,
+	    context = undefined,
+	    stepDone = undefined,
+	    createFunctionError = undefined,
+	    createFunctionData = undefined,
+	    updateFunctionCodeError = undefined,
+	    updateFunctionCodeData = undefined,
+	    updateFunctionConfigurationError = undefined,
+	    updateFunctionConfigurationData = undefined,
+	    stepReturnError = undefined,
+	    stepReturnData = undefined,
+	    parameters = undefined,
+	    lambdaZipFilePath = undefined,
+	    lambdaFilePath = undefined,
+	    roleArn = undefined,
+	    lambdaArn = undefined,
+	    mockLambdaSpy = undefined,
+	    createFunctionParameters = undefined,
+	    handlerString = undefined;
+
+	var mockLambda = {
+		createFunction: _sinon2.default.spy(function (params, callback) {
 			createFunctionParameters = params;
 			callback(createFunctionError, createFunctionData);
 		}),
-		updateFunctionCode: sinon.spy((params, callback) => {
+		updateFunctionCode: _sinon2.default.spy(function (params, callback) {
 			callback(updateFunctionCodeError, updateFunctionCodeData);
 		}),
-		updateFunctionConfiguration: sinon.spy((params, callback) => {
+		updateFunctionConfiguration: _sinon2.default.spy(function (params, callback) {
 			callback(updateFunctionConfigurationError, updateFunctionConfigurationData);
 		})
 	};
 
-	class MockLambda {
-		constructor(config) {
-			mockLambdaSpy(config);
-			return mockLambda;
-		}
-	}
+	var MockLambda = function MockLambda(config) {
+		_classCallCheck(this, MockLambda);
 
-	const MockAWS = {
+		mockLambdaSpy(config);
+		return mockLambda;
+	};
+
+	var MockAWS = {
 		Lambda: MockLambda
 	};
 
-	beforeEach(done => {
-		conan = new Conan({
+	beforeEach(function (done) {
+		conan = new _conan2.default({
 			region: "us-east-1"
 		});
 
@@ -73,16 +94,55 @@ describe(".upsertLambdaStep(conan, context, stepDone)", () => {
 		lambdaFilePath = __dirname + "/../fixtures/lambda.js";
 		lambdaZipFilePath = __dirname + "/../fixtures/lambda.zip";
 
-		parameters = new class MockConanAwsLambda {
-			name() { 				return "TestFunction"; }
-			handler() { 		return ["handler"]; }
-			description() { return "This is my Lambda!"; }
-			memorySize() { 	return 128; }
-			publish() { 		return true; }
-			timeout() { 		return 3; }
-			runtime() {			return "nodejs"; }
-			filePath() {		return lambdaFilePath; }
-		}();
+		parameters = new (function () {
+			function MockConanAwsLambda() {
+				_classCallCheck(this, MockConanAwsLambda);
+			}
+
+			_createClass(MockConanAwsLambda, [{
+				key: "name",
+				value: function name() {
+					return "TestFunction";
+				}
+			}, {
+				key: "handler",
+				value: function handler() {
+					return ["handler"];
+				}
+			}, {
+				key: "description",
+				value: function description() {
+					return "This is my Lambda!";
+				}
+			}, {
+				key: "memorySize",
+				value: function memorySize() {
+					return 128;
+				}
+			}, {
+				key: "publish",
+				value: function publish() {
+					return true;
+				}
+			}, {
+				key: "timeout",
+				value: function timeout() {
+					return 3;
+				}
+			}, {
+				key: "runtime",
+				value: function runtime() {
+					return "nodejs";
+				}
+			}, {
+				key: "filePath",
+				value: function filePath() {
+					return lambdaFilePath;
+				}
+			}]);
+
+			return MockConanAwsLambda;
+		}())();
 
 		context = {
 			parameters: parameters,
@@ -109,40 +169,40 @@ describe(".upsertLambdaStep(conan, context, stepDone)", () => {
 		};
 		createFunctionError = null;
 
-		mockLambdaSpy = sinon.spy();
+		mockLambdaSpy = _sinon2.default.spy();
 
-		const lambdaExtension = path.extname(parameters.filePath());
-		const fileName = path.basename(parameters.filePath(), lambdaExtension);
-		handlerString = `${fileName}.${parameters.handler()}`;
+		var lambdaExtension = _path2.default.extname(parameters.filePath());
+		var fileName = _path2.default.basename(parameters.filePath(), lambdaExtension);
+		handlerString = fileName + "." + parameters.handler();
 
-		stepDone = (afterStepCallback) => {
-			return (error, data) => {
+		stepDone = function stepDone(afterStepCallback) {
+			return function (error, data) {
 				stepReturnError = error;
 				stepReturnData = data;
 				afterStepCallback();
 			};
 		};
 
-		upsertLambdaStep(conan, context, stepDone(done));
+		(0, _upsertLambdaStep2.default)(conan, context, stepDone(done));
 	});
 
-	afterEach(done => {
-		temp.cleanup(done);
+	afterEach(function (done) {
+		_temp2.default.cleanup(done);
 	});
 
-	it("should be a function", () => {
-		(typeof upsertLambdaStep).should.equal("function");
+	it("should be a function", function () {
+		(typeof _upsertLambdaStep2.default === "undefined" ? "undefined" : _typeof(_upsertLambdaStep2.default)).should.equal("function");
 	});
 
-	it("should set the designated region on the lambda client", () => {
+	it("should set the designated region on the lambda client", function () {
 		mockLambdaSpy.calledWith({
 			region: conan.config.region
 		}).should.be.true;
 	});
 
-	describe("(When Lambda is NOT New)", () => {
-		it("should call AWS to update the lambda configuration with the designated parameters", () => {
-			const updateConfigurationParameters = {
+	describe("(When Lambda is NOT New)", function () {
+		it("should call AWS to update the lambda configuration with the designated parameters", function () {
+			var updateConfigurationParameters = {
 				FunctionName: parameters.name(),
 				Handler: handlerString,
 				Role: roleArn,
@@ -153,65 +213,65 @@ describe(".upsertLambdaStep(conan, context, stepDone)", () => {
 			mockLambda.updateFunctionConfiguration.firstCall.args[0].should.eql(updateConfigurationParameters);
 		});
 
-		it("should call AWS to update the lambda with the designated code", () => {
-			const updateCodeParameters = {
-				ZipFile: fileSystem.readFileSync(lambdaZipFilePath),
+		it("should call AWS to update the lambda with the designated code", function () {
+			var updateCodeParameters = {
+				ZipFile: _fs2.default.readFileSync(lambdaZipFilePath),
 				FunctionName: parameters.name(),
 				Publish: parameters.publish()
 			};
 			mockLambda.updateFunctionCode.firstCall.args[0].should.eql(updateCodeParameters);
 		});
 
-		describe("(Lambda is Updated)", () => {
-			beforeEach(done => {
+		describe("(Lambda is Updated)", function () {
+			beforeEach(function (done) {
 				updateFunctionConfigurationData = {
 					FunctionArn: createFunctionData.FunctionArn
 				};
-				upsertLambdaStep(conan, context, stepDone(done));
+				(0, _upsertLambdaStep2.default)(conan, context, stepDone(done));
 			});
 
-			it("should return the lambda Amazon Resource Name", () => {
+			it("should return the lambda Amazon Resource Name", function () {
 				stepReturnData.should.eql({
 					lambdaArn: updateFunctionConfigurationData.FunctionArn
 				});
 			});
 		});
 
-		describe("(Lambda Code is NOT Updated)", () => {
-			beforeEach(() => {
+		describe("(Lambda Code is NOT Updated)", function () {
+			beforeEach(function () {
 				updateFunctionCodeError = new Error();
 				updateFunctionCodeError.statusCode = 400;
 			});
 
-			it("should return an error", () => {
-				upsertLambdaStep(conan, context, (error) => {
+			it("should return an error", function () {
+				(0, _upsertLambdaStep2.default)(conan, context, function (error) {
 					error.should.eql(updateFunctionCodeError);
 				});
 			});
 		});
 
-		describe("(Lambda Configuration is NOT Updated)", () => {
-			beforeEach(() => {
+		describe("(Lambda Configuration is NOT Updated)", function () {
+			beforeEach(function () {
 				updateFunctionConfigurationError = new Error();
 				updateFunctionConfigurationError.statusCode = 400;
 			});
 
-			it("should return an error", () => {
-				upsertLambdaStep(conan, context, (error) => {
+			it("should return an error", function () {
+				(0, _upsertLambdaStep2.default)(conan, context, function (error) {
 					error.should.eql(updateFunctionConfigurationError);
 				});
 			});
 		});
 	});
 
-	describe("(When Lambda is New)", () => {
-		beforeEach(done => {
+	describe("(When Lambda is New)", function () {
+		beforeEach(function (done) {
 			context.results.lambdaArn = null;
-			upsertLambdaStep(conan, context, stepDone(done));
+			(0, _upsertLambdaStep2.default)(conan, context, stepDone(done));
 		});
 
-		it("should call AWS with the designated lambda parameters", () => {
-			const expectedCreateFunctionParameters = {
+		it("should call AWS with the designated lambda parameters", function () {
+			var expectedCreateFunctionParameters = {
 				FunctionName: parameters.name(),
 				Handler: handlerString,
 				Role: roleArn,
@@ -226,34 +286,33 @@ describe(".upsertLambdaStep(conan, context, stepDone)", () => {
 			createFunctionParameters.should.deep.equal(expectedCreateFunctionParameters);
 		});
 
-		it("should call AWS with the designated lambda code", () => {
-			const expectedCodeBuffer = fileSystem.readFileSync(__dirname + "/../fixtures/lambda.zip");
+		it("should call AWS with the designated lambda code", function () {
+			var expectedCodeBuffer = _fs2.default.readFileSync(__dirname + "/../fixtures/lambda.zip");
 
-			const codeBuffer = createFunctionParameters.Code.ZipFile;
+			var codeBuffer = createFunctionParameters.Code.ZipFile;
 
 			codeBuffer.should.deep.equal(expectedCodeBuffer);
 		});
 
-		describe("(Lambda is Created)", () => {
-			it("should return the lambda Amazon Resource Name", () => {
+		describe("(Lambda is Created)", function () {
+			it("should return the lambda Amazon Resource Name", function () {
 				stepReturnData.should.eql({
 					lambdaArn: createFunctionData.FunctionArn
 				});
 			});
 		});
 
-		describe("(Lambda is NOT Created)", () => {
-			beforeEach(() => {
+		describe("(Lambda is NOT Created)", function () {
+			beforeEach(function () {
 				createFunctionError = new Error();
 				createFunctionError.statusCode = 400;
 			});
 
-			it("should return an error", () => {
-				upsertLambdaStep(conan, context, (error) => {
+			it("should return an error", function () {
+				(0, _upsertLambdaStep2.default)(conan, context, function (error) {
 					error.should.eql(createFunctionError);
 				});
 			});
 		});
-
 	});
 });

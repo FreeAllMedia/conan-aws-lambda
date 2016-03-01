@@ -4,16 +4,17 @@ import sinon from "sinon";
 
 describe(".createRoleStep(conan, context, stepDone)", () => {
 	let conan,
-			context,
-			stepDone,
+		clock,
+		context,
+		stepDone,
 
-			awsResponseError,
-			awsResponseData,
+		awsResponseError,
+		awsResponseData,
 
-			stepReturnError,
-			stepReturnData,
+		stepReturnError,
+		stepReturnData,
 
-			parameters;
+		parameters;
 
 	const mockIam = {
 		createRole: sinon.spy((params, callback) => {
@@ -28,6 +29,8 @@ describe(".createRoleStep(conan, context, stepDone)", () => {
 	};
 
 	beforeEach(() => {
+		clock = sinon.useFakeTimers();
+
 		conan = new Conan({
 			region: "us-east-1"
 		});
@@ -63,6 +66,7 @@ describe(".createRoleStep(conan, context, stepDone)", () => {
 			};
 
 			createRoleStep(conan, context, stepDone(done));
+			clock.tick(6000);
 		});
 
 		it("should be a function", () => {

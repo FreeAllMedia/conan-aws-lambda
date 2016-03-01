@@ -1,3 +1,5 @@
+"use strict";
+
 function requireDefault(fileName) {
 	var object = require(fileName);
 	if (object && object.__esModule) {

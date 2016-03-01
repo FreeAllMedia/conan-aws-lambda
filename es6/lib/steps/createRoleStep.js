@@ -21,9 +21,12 @@ export default function createRoleStep(conan, context, stepDone) {
 			if (error) {
 				stepDone(error);
 			} else {
-				stepDone(null, {
-					roleArn: responseData.Role.Arn
-				});
+				console.log("IAM Lambda Role is new, we are creating it but we need to wait 5 seconds while the role is propagated by AWS... (this is a one time thing for each role)");
+				setTimeout(() => {
+					stepDone(null, {
+						roleArn: responseData.Role.Arn
+					});
+				}, 5000);
 			}
 		});
 	} else {

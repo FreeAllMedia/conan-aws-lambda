@@ -10,7 +10,7 @@ export function handler(input, context) {
 	if(!input.params.queryString.name
 		|| !input.params.header.acceptLanguage
 		|| !input.params.path.age) {
-		context.done(new Error(`Insufficient parameters to gave a proper greeting. (age=${input.params.path.age},name=${input.params.queryString.name},language=${input.params.header.acceptLanguage})`));
+		context.done(new Error(`Insufficient parameters to gave a proper greeting. Send at least an age on the path, a name on the query string and the accept-language header on the request.`));
 	} else {
 		name = input.params.queryString.name;
 		language = acceptLanguage.get(input.params.header.acceptLanguage);

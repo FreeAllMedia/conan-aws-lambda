@@ -12,5 +12,20 @@ export default function defineResources(conan) {
 				})
 				.responseHeaders({
 					"Allow-Control-Allow-Origin": "*"
+				})
+				.post("/greetings")
+				.headers("Content-Type")
+				.lambda("postGreeting", "staging")
+				.statusCodes({
+					"200": "",
+					"400": "Insufficient parameters.*"
+				})
+				.responseHeaders({
+					"Allow-Control-Allow-Origin": "*"
+				})
+				.options("/greetings")
+				.responseHeaders({
+					"Allow-Control-Allow-Origin": "*",
+					"Allow-Control-Allow-Methods": "*"
 				});
 }
