@@ -22,3 +22,19 @@ gulp.task("deploy", ["build"], () => {
 		console.log("Deploy complete!");
 	});
 });
+
+gulp.task("test-staging", () => {
+	const conan = new Conan({
+		region: "us-east-1",
+		bucket: "my-akiro-packages"
+	});
+
+	conan.use(ConanAwsLambda);
+
+	conan.lambda("regularGreeting")
+		.invoke({},
+			(error, response) => {
+				console.log("lambda response is ", { error, response });
+			}
+		);
+});
