@@ -4,6 +4,10 @@ var _conanAwsLambda = require("../../lib/components/conanAwsLambda.js");
 
 var _conanAwsLambda2 = _interopRequireDefault(_conanAwsLambda);
 
+var _conanAwsLambdaPlugin = require("../../lib/conanAwsLambdaPlugin.js");
+
+var _conanAwsLambdaPlugin2 = _interopRequireDefault(_conanAwsLambdaPlugin);
+
 var _conan = require("conan");
 
 var _conan2 = _interopRequireDefault(_conan);
@@ -12,9 +16,13 @@ var _jargon = require("jargon");
 
 var _jargon2 = _interopRequireDefault(_jargon);
 
+var _sinon = require("sinon");
+
+var _sinon2 = _interopRequireDefault(_sinon);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-describe("ConanAwsLambda(conan, name, filePath, role)", function () {
+describe("ConanAwsLambda(conan, name)", function () {
 	var lambda = undefined;
 	var name = undefined;
 	var filePath = undefined;
@@ -27,7 +35,10 @@ describe("ConanAwsLambda(conan, name, filePath, role)", function () {
 		role = "SomeRole";
 
 		conan = new _conan2.default();
-		lambda = new _conanAwsLambda2.default(conan, name, filePath, role);
+		conan.use(_conanAwsLambdaPlugin2.default);
+
+		lambda = new _conanAwsLambda2.default(conan, name);
+		lambda.filePath(filePath).role(role);
 	});
 
 	it("should extend ConanComponent", function () {
@@ -40,14 +51,6 @@ describe("ConanAwsLambda(conan, name, filePath, role)", function () {
 
 	it("should save name to .name()", function () {
 		lambda.name().should.eql(name);
-	});
-
-	it("should save filePath to .filePath()", function () {
-		lambda.filePath().should.eql(filePath);
-	});
-
-	it("should save role to .role()", function () {
-		lambda.role().should.eql(role);
 	});
 
 	describe("(parameters)", function () {
@@ -120,6 +123,11 @@ describe("ConanAwsLambda(conan, name, filePath, role)", function () {
 	});
 
 	describe("(steps)", function () {
+		it("should add a validate lambda step", function () {
+			var step = conan.steps.findByName("validateLambdaStep");
+			step.parameters.should.eql(lambda);
+		});
+
 		it("should add a find lambda by name step", function () {
 			var step = conan.steps.findByName("findLambdaByNameStep");
 			step.parameters.should.eql(lambda);

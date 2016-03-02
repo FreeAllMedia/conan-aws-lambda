@@ -52,6 +52,10 @@ var _updateLambdaAliasStep = require("../steps/updateLambdaAliasStep.js");
 
 var _updateLambdaAliasStep2 = _interopRequireDefault(_updateLambdaAliasStep);
 
+var _validateLambdaStep = require("../steps/validateLambdaStep.js");
+
+var _validateLambdaStep2 = _interopRequireDefault(_validateLambdaStep);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -71,7 +75,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 
 	_createClass(ConanAwsLambda, [{
 		key: "initialize",
-		value: function initialize(conan, name, filePath, role) {
+		value: function initialize(conan, name) {
 			this.conan = conan;
 
 			this.parameters("name", "filePath", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages");
@@ -80,9 +84,11 @@ var ConanAwsLambda = function (_ConanComponent) {
 
 			this.multipleValueAggregateParameters("dependencies", "alias");
 
+			/**
+    * DEFAULT VALUES
+    */
+
 			this.name(name);
-			this.filePath(filePath);
-			this.role(role);
 
 			this.handler("handler");
 			this.runtime("nodejs");
@@ -90,6 +96,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 			this.timeout(3);
 
 			// attach steps to conan
+			this.conan.steps.add(_validateLambdaStep2.default, this);
 			this.conan.steps.add(_findLambdaByNameStep2.default, this);
 			this.conan.steps.add(_findRoleByNameStep2.default, this);
 			this.conan.steps.add(_createRoleStep2.default, this);
@@ -105,7 +112,33 @@ var ConanAwsLambda = function (_ConanComponent) {
 	}, {
 		key: "lambda",
 		value: function lambda(name) {
-			return new ConanAwsLambda(this.conan, name);
+			return this.conan.lambda(name);
+		}
+	}, {
+		key: "invoke",
+		value: function invoke(payload, callback) {
+			if (this.conan.config.region === undefined) {
+				var error = new Error("conan.config.region is required to use .invoke().");
+				callback(error);
+			} else {
+				var AWS = this.conan.steps.libraries.AWS;
+
+				var lambda = new AWS.Lambda({
+					region: this.conan.config.region
+				});
+
+				lambda.invoke({
+					FunctionName: this.name(),
+					Qualifier: this.alias(),
+					Payload: JSON.stringify(payload)
+				}, function (error, data) {
+					if (error) {
+						callback(error);
+					} else {
+						callback(null, JSON.parse(data));
+					}
+				});
+			}
 		}
 	}]);
 

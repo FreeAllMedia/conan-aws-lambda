@@ -1,0 +1,26 @@
+{
+  "name": "conan-aws-lambda-hello-world",
+  "version": "0.1.0",
+  "description": "Hello World Example for conan-aws-lambda",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "author": "Free All Media, LLC",
+  "contributors": [
+    {
+      "name": "nicosommi",
+      "email": "nicosommi@gmail.com"
+    },
+    {
+      "name": "dcrockwell",
+      "email": "dcautomates@gmail.com"
+    },
+    {
+      "name": "paulgoggin",
+      "email": "pgoggin@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

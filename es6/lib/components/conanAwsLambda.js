@@ -1,4 +1,5 @@
 import { ConanComponent } from "conan";
+
 import findLambdaByNameStep from "../steps/findLambdaByNameStep.js";
 import findRoleByNameStep from "../steps/findRoleByNameStep.js";
 import createRoleStep from "../steps/createRoleStep.js";
@@ -10,9 +11,10 @@ import publishLambdaVersionStep from "../steps/publishLambdaVersionStep.js";
 import findLambdaAliasStep from "../steps/findLambdaAliasStep.js";
 import createLambdaAliasStep from "../steps/createLambdaAliasStep.js";
 import updateLambdaAliasStep from "../steps/updateLambdaAliasStep.js";
+import validateLambdaStep from "../steps/validateLambdaStep.js";
 
 export default class ConanAwsLambda extends ConanComponent {
-	initialize(conan, name, filePath, role) {
+	initialize(conan, name) {
 		this.conan = conan;
 
 		this.parameters(
@@ -37,9 +39,11 @@ export default class ConanAwsLambda extends ConanComponent {
 			"alias"
 		);
 
+		/**
+		 * DEFAULT VALUES
+		 */
+
 		this.name(name);
-		this.filePath(filePath);
-		this.role(role);
 
 		this.handler("handler");
 		this.runtime("nodejs");
@@ -47,6 +51,7 @@ export default class ConanAwsLambda extends ConanComponent {
 		this.timeout(3);
 
 		// attach steps to conan
+		this.conan.steps.add(validateLambdaStep, this);
 		this.conan.steps.add(findLambdaByNameStep, this);
 		this.conan.steps.add(findRoleByNameStep, this);
 		this.conan.steps.add(createRoleStep, this);
@@ -61,6 +66,31 @@ export default class ConanAwsLambda extends ConanComponent {
 	}
 
 	lambda(name) {
-		return new ConanAwsLambda(this.conan, name);
+		return this.conan.lambda(name);
+	}
+
+	invoke(payload, callback) {
+		if (this.conan.config.region === undefined) {
+			const error = new Error("conan.config.region is required to use .invoke().");
+			callback(error);
+		} else {
+			const AWS = this.conan.steps.libraries.AWS;
+
+			const lambda = new AWS.Lambda({
+				region: this.conan.config.region
+			});
+
+			lambda.invoke({
+				FunctionName: this.name(),
+				Qualifier: this.alias(),
+				Payload: JSON.stringify(payload)
+			}, (error, data) => {
+				if (error) {
+					callback(error);
+				} else {
+					callback(null, JSON.parse(data));
+				}
+			});
+		}
 	}
 }

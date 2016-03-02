@@ -1,8 +1,10 @@
 import ConanAwsLambda from "../../lib/components/conanAwsLambda.js";
+import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 import Conan, { ConanComponent } from "conan";
 import inflect from "jargon";
+import sinon from "sinon";
 
-describe("ConanAwsLambda(conan, name, filePath, role)", () => {
+describe("ConanAwsLambda(conan, name)", () => {
 	let lambda;
 	let name;
 	let filePath;
@@ -15,7 +17,10 @@ describe("ConanAwsLambda(conan, name, filePath, role)", () => {
 		role = "SomeRole";
 
 		conan = new Conan();
-		lambda = new ConanAwsLambda(conan, name, filePath, role);
+		conan.use(ConanAwsLambdaPlugin);
+
+		lambda = new ConanAwsLambda(conan, name);
+		lambda.filePath(filePath).role(role);
 	});
 
 	it("should extend ConanComponent", () => {
@@ -28,14 +33,6 @@ describe("ConanAwsLambda(conan, name, filePath, role)", () => {
 
 	it("should save name to .name()", () => {
 		lambda.name().should.eql(name);
-	});
-
-	it("should save filePath to .filePath()", () => {
-		lambda.filePath().should.eql(filePath);
-	});
-
-	it("should save role to .role()", () => {
-		lambda.role().should.eql(role);
 	});
 
 	describe("(parameters)", () => {
@@ -127,6 +124,11 @@ describe("ConanAwsLambda(conan, name, filePath, role)", () => {
 	});
 
 	describe("(steps)", () => {
+		it("should add a validate lambda step", () => {
+			const step = conan.steps.findByName("validateLambdaStep");
+			step.parameters.should.eql(lambda);
+		});
+
 		it("should add a find lambda by name step", () => {
 			const step = conan.steps.findByName("findLambdaByNameStep");
 			step.parameters.should.eql(lambda);

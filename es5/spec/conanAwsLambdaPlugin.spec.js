@@ -22,6 +22,10 @@ var _awsSdk = require("aws-sdk");
 
 var _awsSdk2 = _interopRequireDefault(_awsSdk);
 
+var _akiro = require("akiro");
+
+var _akiro2 = _interopRequireDefault(_akiro);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 describe("ConanAwsLambdaPlugin(conan)", function () {
@@ -60,15 +64,15 @@ describe("ConanAwsLambdaPlugin(conan)", function () {
 		_typeof(conan.lambda).should.eql("function");
 	});
 
-	it("should setup an empty object to hold lambdas at conan.lambdas", function () {
-		conan.lambdas.should.eql({});
-	});
-
-	describe("(AWS)", function () {
+	describe("(Libraries)", function () {
 		before(function () {
 			conan = new _conan2.default();
 			conan.steps.constructor.prototype.library = _sinon2.default.spy(conan.steps.constructor.prototype.library);
 			conan.use(_conanAwsLambdaPlugin2.default);
+		});
+
+		it("should add the Akiro library", function () {
+			conan.steps.library.calledWith("Akiro", _akiro2.default).should.be.true;
 		});
 
 		it("should add the AWS library", function () {
@@ -79,15 +83,10 @@ describe("ConanAwsLambdaPlugin(conan)", function () {
 	describe("conan.lambda(name, handlerPath)", function () {
 		var lambda = undefined;
 		var name = undefined;
-		var filePath = undefined;
-		var handler = undefined;
 
 		beforeEach(function () {
 			name = "AccountCreate";
-			filePath = "/account/create";
-			handler = "handler";
-
-			lambda = conan.lambda(name, filePath, handler);
+			lambda = conan.lambda(name);
 		});
 
 		it("should return an instance of ConanAwsLambda", function () {
@@ -100,14 +99,6 @@ describe("ConanAwsLambdaPlugin(conan)", function () {
 
 		it("should pass the lambda name to the ConanAwsLambda constructor", function () {
 			lambda.name().should.eql(name);
-		});
-
-		it("should pass the lambda file path to the ConanAwsLambda constructor", function () {
-			lambda.filePath().should.eql(filePath);
-		});
-
-		it("should pass the lambda handler to the ConanAwsLambda constructor", function () {
-			lambda.handler().should.eql([handler]);
 		});
 	});
 });
