@@ -1,7 +1,7 @@
 {
   "generatorVersion": "0.2.21",
   "name": "conan-aws-lambda",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "AWS Lambda plugin for Conan: The Deployer.",
   "main": "es5/lib/conanAwsLambdaPlugin.js",
   "scripts": {
@@ -48,9 +48,10 @@
   },
   "homepage": "https://github.com/FreeAllMedia/conan-aws-lambda",
   "dependencies": {
-    "akiro": "0.0.0",
+    "akiro": "0.0.1",
     "archiver": "^0.21.0",
     "aws-sdk": "^2.2.24",
+    "conan": "0.0.22",
     "flowsync": "^0.1.12",
     "glob": "^7.0.0",
     "hacher": "^0.1.4",
@@ -66,7 +67,6 @@
     "babel-preset-es2015": "^6.5.0",
     "chai": "^3.0.0",
     "compare-version": "^0.1.2",
-    "conan": "0.0.17",
     "coveralls": "^2.11.2",
     "eslint": "^1.10.3",
     "gulp": "^3.9.0",
