@@ -31,10 +31,9 @@ gulp.task("test-staging", () => {
 
 	conan.use(ConanAwsLambda);
 
-	conan.lambda("regularGreeting")
-		.invoke({},
-			(error, response) => {
-				console.log("lambda response is ", { error, response });
-			}
-		);
+	const regularGreeting = conan.lambda("regularGreeting");
+
+	regularGreeting.invoke({}, (error, response) => {
+		console.log("lambda response is ", { error, response });
+	});
 });
