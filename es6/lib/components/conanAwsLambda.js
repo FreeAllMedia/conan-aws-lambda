@@ -66,6 +66,31 @@ export default class ConanAwsLambda extends ConanComponent {
 	}
 
 	lambda(name) {
-		return new ConanAwsLambda(this.conan, name);
+		return this.conan.lambda(name);
+	}
+
+	invoke(payload, callback) {
+		if (this.conan.config.region === undefined) {
+			const error = new Error("conan.config.region is required to use .invoke().");
+			callback(error);
+		} else {
+			const AWS = this.conan.steps.libraries.AWS;
+
+			const lambda = new AWS.Lambda({
+				region: this.conan.config.region
+			});
+
+			lambda.invoke({
+				FunctionName: this.name(),
+				Qualifier: this.alias(),
+				Payload: JSON.stringify(payload)
+			}, (error, data) => {
+				if (error) {
+					callback(error);
+				} else {
+					callback(null, JSON.parse(data));
+				}
+			});
+		}
 	}
 }

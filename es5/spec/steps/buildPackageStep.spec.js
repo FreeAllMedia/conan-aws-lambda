@@ -1,32 +1,58 @@
-import buildPackageStep from "../../lib/steps/buildPackageStep.js";
-import sinon from "sinon";
-import fileSystem from "fs";
-import path from "path";
-import temp from "temp";
-import unzip from "unzip2";
-import inflect from "jargon";
-import glob from "glob";
+"use strict";
 
-temp.track();
+var _buildPackageStep = require("../../lib/steps/buildPackageStep.js");
 
-describe(".buildPackageStep(conan, context, stepDone)", () => {
-	let mockConan,
-			context,
+var _buildPackageStep2 = _interopRequireDefault(_buildPackageStep);
 
-			mockLambda,
+var _sinon = require("sinon");
 
-			akiroConstructorSpy,
-			mockAkiro;
+var _sinon2 = _interopRequireDefault(_sinon);
 
+var _fs = require("fs");
 
-	class MockAkiro {
-		constructor(...options) {
-			akiroConstructorSpy(...options);
-			return mockAkiro;
-		}
-	}
+var _fs2 = _interopRequireDefault(_fs);
 
-	beforeEach(() => {
+var _path = require("path");
+
+var _path2 = _interopRequireDefault(_path);
+
+var _temp = require("temp");
+
+var _temp2 = _interopRequireDefault(_temp);
+
+var _unzip = require("unzip2");
+
+var _unzip2 = _interopRequireDefault(_unzip);
+
+var _jargon = require("jargon");
+
+var _jargon2 = _interopRequireDefault(_jargon);
+
+var _glob = require("glob");
+
+var _glob2 = _interopRequireDefault(_glob);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+_temp2.default.track();
+
+xdescribe(".buildPackageStep(conan, context, stepDone)", function () {
+	var mockConan = undefined,
+	    context = undefined,
+	    mockLambda = undefined,
+	    akiroConstructorSpy = undefined,
+	    mockAkiro = undefined;
+
+	var MockAkiro = function MockAkiro() {
+		_classCallCheck(this, MockAkiro);
+
+		akiroConstructorSpy.apply(undefined, arguments);
+		return mockAkiro;
+	};
+
+	beforeEach(function () {
 		mockConan = {
 			config: {
 				region: "us-east-1",
@@ -35,20 +61,22 @@ describe(".buildPackageStep(conan, context, stepDone)", () => {
 		};
 
 		mockLambda = {
-			name: () => { return "MyLambda"; }
+			name: function name() {
+				return "MyLambda";
+			}
 		};
 
 		mockAkiro = {
-			package: sinon.spy((packages, outputDirectory, packageCallback) => {
-				fileSystem.mkdirSync(outputDirectory);
+			package: _sinon2.default.spy(function (packages, outputDirectory, packageCallback) {
+				_fs2.default.mkdirSync(outputDirectory);
 				packageCallback();
 			})
 		};
 
-		akiroConstructorSpy = sinon.spy();
+		akiroConstructorSpy = _sinon2.default.spy();
 
 		context = {
-			temporaryDirectoryPath: temp.mkdirSync("buildPackageStep"),
+			temporaryDirectoryPath: _temp2.default.mkdirSync("buildPackageStep"),
 			libraries: {
 				Akiro: MockAkiro
 			},
@@ -56,60 +84,57 @@ describe(".buildPackageStep(conan, context, stepDone)", () => {
 		};
 	});
 
-	describe("(when .packages() are set)", () => {
-		beforeEach(done => {
-			mockLambda.packages = () => {
+	describe("(when .packages() are set)", function () {
+		beforeEach(function (done) {
+			mockLambda.packages = function () {
 				return {
 					flowsync: "0.1.12",
 					incognito: "0.1.4"
 				};
 			};
-			buildPackageStep(mockConan, context, stepDone(done));
+			(0, _buildPackageStep2.default)(mockConan, context, stepDone(done));
 		});
 
-		it("should configure akiro with the designated options", () => {
+		it("should configure akiro with the designated options", function () {
 			akiroConstructorSpy.calledWith({
 				region: mockConan.config.region,
 				bucket: mockConan.config.bucket
 			}).should.be.true;
 		});
 
-		it("should call akiro.package with the specified packages", () => {
+		it("should call akiro.package with the specified packages", function () {
 			mockAkiro.package.calledWith(mockLambda.packages()).should.be.true;
 		});
 
-		it("should return the package zip file path", () => {
-			const expectedPackageZipFilePath = `${context.temporaryDirectoryPath}/zip/${inflect(mockLambda.name()).camel.toString()}.packages.zip`;
+		it("should return the package zip file path", function () {
+			var expectedPackageZipFilePath = context.temporaryDirectoryPath + "/zip/" + (0, _jargon2.default)(mockLambda.name()).camel.toString() + ".packages.zip";
 			stepReturnData.should.eql({
 				packageZipFilePath: expectedPackageZipFilePath
 			});
 		});
 
-		it("should generate a zip file containing all of the built packages at the package zip file path", done => {
-			const expectedPackageZipFilePath = `${context.temporaryDirectoryPath}/zip/${inflect(mockLambda.name()).camel.toString()}.packages.zip`;
-			const expectedFilePaths = glob.sync(`${context.temporaryDirectoryPath}/zip/`);
+		it("should generate a zip file containing all of the built packages at the package zip file path", function (done) {
+			var expectedPackageZipFilePath = context.temporaryDirectoryPath + "/zip/" + (0, _jargon2.default)(mockLambda.name()).camel.toString() + ".packages.zip";
+			var expectedFilePaths = _glob2.default.sync(context.temporaryDirectoryPath + "/zip/");
 
-			let zipFilePaths = [];
+			var zipFilePaths = [];
 
-			fileSystem.createReadStream(expectedPackageZipFilePath)
-				.pipe(unzip.Parse())
-				.on("entry", entry => {
-					zipFilePaths.push(entry.path);
-				})
-				.on("close", () => {
-					zipFilePaths.should.have.members(expectedFilePaths);
-					done();
-				});
+			_fs2.default.createReadStream(expectedPackageZipFilePath).pipe(_unzip2.default.Parse()).on("entry", function (entry) {
+				zipFilePaths.push(entry.path);
+			}).on("close", function () {
+				zipFilePaths.should.have.members(expectedFilePaths);
+				done();
+			});
 		});
 	});
 
-	describe("(when .packages() are NOT set)", () => {
-		beforeEach(done => {
-			mockLambda.packages = () => {};
-			buildPackageStep(mockConan, context, stepDone(done));
+	describe("(when .packages() are NOT set)", function () {
+		beforeEach(function (done) {
+			mockLambda.packages = function () {};
+			(0, _buildPackageStep2.default)(mockConan, context, stepDone(done));
 		});
 
-		it("should return with the package zip file path set to null", () => {
+		it("should return with the package zip file path set to null", function () {
 			stepReturnData.should.eql({
 				packageZipFilePath: null
 			});
@@ -119,11 +144,11 @@ describe(".buildPackageStep(conan, context, stepDone)", () => {
 
 /* SPEC UTILITIES BELOW HERE */
 
-let stepReturnError;
-let stepReturnData;
+var stepReturnError = undefined;
+var stepReturnData = undefined;
 
-function stepDone (done) {
-	return (error, data) => {
+function stepDone(done) {
+	return function (error, data) {
 		stepReturnError = error;
 		stepReturnData = data;
 		done();

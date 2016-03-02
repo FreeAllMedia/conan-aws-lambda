@@ -1,43 +1,71 @@
-import Conan from "conan";
-import attachRolePolicyStep from "../../lib/steps/attachRolePolicyStep.js";
-import sinon from "sinon";
-import chai from "chai";
+"use strict";
 
-describe(".attachRolePolicyStep(conan, context, stepDone)", () => {
-	let conan,
-			context,
-			stepDone,
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-			awsResponseError,
-			awsResponseData,
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-			stepReturnError,
+var _conan = require("conan");
 
-			should,
+var _conan2 = _interopRequireDefault(_conan);
 
-			parameters;
+var _attachRolePolicyStep = require("../../lib/steps/attachRolePolicyStep.js");
 
-	const mockIam = {
-		attachRolePolicy: sinon.spy((params, callback) => {
+var _attachRolePolicyStep2 = _interopRequireDefault(_attachRolePolicyStep);
+
+var _sinon = require("sinon");
+
+var _sinon2 = _interopRequireDefault(_sinon);
+
+var _chai = require("chai");
+
+var _chai2 = _interopRequireDefault(_chai);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+describe(".attachRolePolicyStep(conan, context, stepDone)", function () {
+	var conan = undefined,
+	    context = undefined,
+	    stepDone = undefined,
+	    awsResponseError = undefined,
+	    awsResponseData = undefined,
+	    stepReturnError = undefined,
+	    should = undefined,
+	    parameters = undefined;
+
+	var mockIam = {
+		attachRolePolicy: _sinon2.default.spy(function (params, callback) {
 			callback(awsResponseError, awsResponseData);
 		})
 	};
 
-	const MockAWS = {
-		IAM: sinon.spy(() => {
+	var MockAWS = {
+		IAM: _sinon2.default.spy(function () {
 			return mockIam;
 		})
 	};
 
-	beforeEach(done => {
-		should = chai.should();
-		conan = new Conan({
+	beforeEach(function (done) {
+		should = _chai2.default.should();
+		conan = new _conan2.default({
 			region: "us-east-1"
 		});
 
-		parameters = new class MockConanAwsLambda {
-			role() { return "TestRolePolicy"; }
-		}();
+		parameters = new (function () {
+			function MockConanAwsLambda() {
+				_classCallCheck(this, MockConanAwsLambda);
+			}
+
+			_createClass(MockConanAwsLambda, [{
+				key: "role",
+				value: function role() {
+					return "TestRolePolicy";
+				}
+			}]);
+
+			return MockConanAwsLambda;
+		}())();
 
 		context = {
 			parameters: parameters,
@@ -48,49 +76,49 @@ describe(".attachRolePolicyStep(conan, context, stepDone)", () => {
 		awsResponseData = {};
 		awsResponseError = null;
 
-		stepDone = (afterStepCallback) => {
-			return (error) => {
+		stepDone = function stepDone(afterStepCallback) {
+			return function (error) {
 				stepReturnError = error;
 				afterStepCallback();
 			};
 		};
 
-		attachRolePolicyStep(conan, context, stepDone(done));
+		(0, _attachRolePolicyStep2.default)(conan, context, stepDone(done));
 	});
 
-	it("should be a function", () => {
-		(typeof attachRolePolicyStep).should.equal("function");
+	it("should be a function", function () {
+		(typeof _attachRolePolicyStep2.default === "undefined" ? "undefined" : _typeof(_attachRolePolicyStep2.default)).should.equal("function");
 	});
 
-	it("should set the designated region on the lambda client", () => {
+	it("should set the designated region on the lambda client", function () {
 		MockAWS.IAM.calledWith({
 			region: conan.config.region
 		}).should.be.true;
 	});
 
-	it("should call AWS with the designated parameters", () => {
+	it("should call AWS with the designated parameters", function () {
 		mockIam.attachRolePolicy.calledWith({
 			RoleName: context.parameters.role(),
 			PolicyArn: "arn:aws:iam::aws:policy/AWSLambdaExecute"
 		}).should.be.true;
 	});
 
-	describe("(Policy Attached)", () => {
-		it("should return no error", () => {
+	describe("(Policy Attached)", function () {
+		it("should return no error", function () {
 			should.not.exist(stepReturnError);
 		});
 	});
 
-	describe("(Unknown Error is Returned)", () => {
-		let errorMessage;
+	describe("(Unknown Error is Returned)", function () {
+		var errorMessage = undefined;
 
-		beforeEach(done => {
+		beforeEach(function (done) {
 			errorMessage = "AWS returned status code 401";
 			awsResponseError = { statusCode: 401, message: errorMessage };
-			attachRolePolicyStep(conan, context, stepDone(done));
+			(0, _attachRolePolicyStep2.default)(conan, context, stepDone(done));
 		});
 
-		it("should return an error which stops the step runner", () => {
+		it("should return an error which stops the step runner", function () {
 			stepReturnError.message.should.eql(errorMessage);
 		});
 	});

@@ -1,55 +1,66 @@
-import ConanAwsLambda from "../../lib/components/conanAwsLambda.js";
-import Conan, { ConanComponent } from "conan";
-import inflect from "jargon";
+"use strict";
 
-describe("ConanAwsLambda(conan, name)", () => {
-	let lambda;
-	let name;
-	let filePath;
-	let role;
-	let conan;
+var _conanAwsLambda = require("../../lib/components/conanAwsLambda.js");
 
-	beforeEach(() => {
+var _conanAwsLambda2 = _interopRequireDefault(_conanAwsLambda);
+
+var _conanAwsLambdaPlugin = require("../../lib/conanAwsLambdaPlugin.js");
+
+var _conanAwsLambdaPlugin2 = _interopRequireDefault(_conanAwsLambdaPlugin);
+
+var _conan = require("conan");
+
+var _conan2 = _interopRequireDefault(_conan);
+
+var _jargon = require("jargon");
+
+var _jargon2 = _interopRequireDefault(_jargon);
+
+var _sinon = require("sinon");
+
+var _sinon2 = _interopRequireDefault(_sinon);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+describe("ConanAwsLambda(conan, name)", function () {
+	var lambda = undefined;
+	var name = undefined;
+	var filePath = undefined;
+	var role = undefined;
+	var conan = undefined;
+
+	beforeEach(function () {
 		name = "AccountCreate";
 		filePath = "/account/create.js";
 		role = "SomeRole";
 
-		conan = new Conan();
-		lambda = new ConanAwsLambda(conan, name);
+		conan = new _conan2.default();
+		conan.use(_conanAwsLambdaPlugin2.default);
+
+		lambda = new _conanAwsLambda2.default(conan, name);
 		lambda.filePath(filePath).role(role);
 	});
 
-	it("should extend ConanComponent", () => {
-		lambda.should.be.instanceOf(ConanComponent);
+	it("should extend ConanComponent", function () {
+		lambda.should.be.instanceOf(_conan.ConanComponent);
 	});
 
-	it("should save conan to .conan", () => {
+	it("should save conan to .conan", function () {
 		lambda.conan.should.eql(conan);
 	});
 
-	it("should save name to .name()", () => {
+	it("should save name to .name()", function () {
 		lambda.name().should.eql(name);
 	});
 
-	describe("(parameters)", () => {
-		[
-			"name",
-			"filePath",
-			"role",
-			"runtime",
-			"description",
-			"memorySize",
-			"timeout",
-			"publish",
-			"packages",
-			"bucket"
-		].forEach((parameterName) => {
-			const parameterNamePascalCase = inflect(parameterName).pascal.toString();
+	describe("(parameters)", function () {
+		["name", "filePath", "role", "runtime", "description", "memorySize", "timeout", "publish", "packages", "bucket"].forEach(function (parameterName) {
+			var parameterNamePascalCase = (0, _jargon2.default)(parameterName).pascal.toString();
 
-			describe(`.${parameterName}(new${parameterNamePascalCase})`, function describeComponentParameter() {
-				it(`should save new${parameterNamePascalCase}`, function itShouldSaveComponentParameter() {
-					let component = new ConanAwsLambda(conan);
-					const testValue = "abc123";
+			describe("." + parameterName + "(new" + parameterNamePascalCase + ")", function describeComponentParameter() {
+				it("should save new" + parameterNamePascalCase, function itShouldSaveComponentParameter() {
+					var component = new _conanAwsLambda2.default(conan);
+					var testValue = "abc123";
 					component = component[parameterName](testValue);
 					component[parameterName]().should.eql(testValue);
 				});
@@ -57,17 +68,15 @@ describe("ConanAwsLambda(conan, name)", () => {
 		});
 	});
 
-	describe("(multiple-value parameters)", () => {
-		[
-			"handler"
-		].forEach((parameterName) => {
-			const parameterNamePascalCase = inflect(parameterName).pascal.toString();
+	describe("(multiple-value parameters)", function () {
+		["handler"].forEach(function (parameterName) {
+			var parameterNamePascalCase = (0, _jargon2.default)(parameterName).pascal.toString();
 
-			describe(`.${parameterName}(new${parameterNamePascalCase})`, () => {
-				it(`should save new${parameterNamePascalCase}`, () => {
-					let component = new ConanAwsLambda(conan);
-					const testValueOne = "abc123";
-					const testValueTwo = "abc123";
+			describe("." + parameterName + "(new" + parameterNamePascalCase + ")", function () {
+				it("should save new" + parameterNamePascalCase, function () {
+					var component = new _conanAwsLambda2.default(conan);
+					var testValueOne = "abc123";
+					var testValueTwo = "abc123";
 					component = component[parameterName](testValueOne, testValueTwo);
 					component[parameterName]().should.eql([testValueOne, testValueTwo]);
 				});
@@ -75,128 +84,122 @@ describe("ConanAwsLambda(conan, name)", () => {
 		});
 	});
 
-	describe("(multiple-value-aggregate parameters)", () => {
-		[
-			"dependencies",
-			"alias"
-		].forEach((parameterName) => {
-			const parameterNamePascalCase = inflect(parameterName).pascal.toString();
+	describe("(multiple-value-aggregate parameters)", function () {
+		["dependencies", "alias"].forEach(function (parameterName) {
+			var parameterNamePascalCase = (0, _jargon2.default)(parameterName).pascal.toString();
 
-			describe(`.${parameterName}(new${parameterNamePascalCase})`, () => {
-				it(`should save new${parameterNamePascalCase}`, () => {
-					let component = new ConanAwsLambda(conan);
+			describe("." + parameterName + "(new" + parameterNamePascalCase + ")", function () {
+				it("should save new" + parameterNamePascalCase, function () {
+					var component = new _conanAwsLambda2.default(conan);
 
-					const testValueOne = "abc123";
-					const testValueTwo = "123abc";
-					const testValueThree = "1a2b3c";
-					const testValueFour = "c1b2a3";
+					var testValueOne = "abc123";
+					var testValueTwo = "123abc";
+					var testValueThree = "1a2b3c";
+					var testValueFour = "c1b2a3";
 
 					component = component[parameterName](testValueOne, testValueTwo);
 					component = component[parameterName](testValueThree, testValueFour);
 
-					component[parameterName]().should.eql([
-						[testValueOne, testValueTwo],
-						[testValueThree, testValueFour]
-					]);
+					component[parameterName]().should.eql([[testValueOne, testValueTwo], [testValueThree, testValueFour]]);
 				});
 			});
 		});
 	});
 
-	describe("(default values)", () => {
-		it("should set the handler to 'handler' by default", () => {
-			lambda = new ConanAwsLambda(conan, name, filePath);
+	describe("(default values)", function () {
+		it("should set the handler to 'handler' by default", function () {
+			lambda = new _conanAwsLambda2.default(conan, name, filePath);
 			lambda.handler().should.eql(["handler"]);
 		});
-		it("should set the runtime to 'nodejs' by default", () => {
+		it("should set the runtime to 'nodejs' by default", function () {
 			lambda.runtime().should.eql("nodejs");
 		});
-		it("should set the memorySize to '128' by default", () => {
+		it("should set the memorySize to '128' by default", function () {
 			lambda.memorySize().should.eql(128);
 		});
-		it("should set the timeout to '3' by default", () => {
+		it("should set the timeout to '3' by default", function () {
 			lambda.timeout().should.eql(3);
 		});
 	});
 
-	describe("(steps)", () => {
-		it("should add a validate lambda step", () => {
-			const step = conan.steps.findByName("validateLambda");
+	describe("(steps)", function () {
+		it("should add a validate lambda step", function () {
+			var step = conan.steps.findByName("validateLambdaStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add a find lambda by name step", () => {
-			const step = conan.steps.findByName("findLambdaByNameStep");
+		it("should add a find lambda by name step", function () {
+			var step = conan.steps.findByName("findLambdaByNameStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add a find role by name step", () => {
-			const step = conan.steps.findByName("findRoleByNameStep");
+		it("should add a find role by name step", function () {
+			var step = conan.steps.findByName("findRoleByNameStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add a create role step", () => {
-			const step = conan.steps.findByName("createRoleStep");
+		it("should add a create role step", function () {
+			var step = conan.steps.findByName("createRoleStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add a attach role policy step", () => {
-			const step = conan.steps.findByName("attachRolePolicyStep");
+		it("should add a attach role policy step", function () {
+			var step = conan.steps.findByName("attachRolePolicyStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add a compile packages step", () => {
-			const step = conan.steps.findByName("buildPackageStep");
+		it("should add a compile packages step", function () {
+			var step = conan.steps.findByName("buildPackageStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add compile lambda zip step", () => {
-			const step = conan.steps.findByName("compileLambdaZipStep");
+		it("should add compile lambda zip step", function () {
+			var step = conan.steps.findByName("compileLambdaZipStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add an upsert lambda step", () => {
-			const step = conan.steps.findByName("upsertLambdaStep");
+		it("should add an upsert lambda step", function () {
+			var step = conan.steps.findByName("upsertLambdaStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add an publish lambda version step", () => {
-			const step = conan.steps.findByName("publishLambdaVersionStep");
+		it("should add an publish lambda version step", function () {
+			var step = conan.steps.findByName("publishLambdaVersionStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add an find lambda alias step", () => {
-			const step = conan.steps.findByName("findLambdaAliasStep");
+		it("should add an find lambda alias step", function () {
+			var step = conan.steps.findByName("findLambdaAliasStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add an create lambda alias step", () => {
-			const step = conan.steps.findByName("createLambdaAliasStep");
+		it("should add an create lambda alias step", function () {
+			var step = conan.steps.findByName("createLambdaAliasStep");
 			step.parameters.should.eql(lambda);
 		});
 
-		it("should add an update lambda alias step", () => {
-			const step = conan.steps.findByName("updateLambdaAliasStep");
+		it("should add an update lambda alias step", function () {
+			var step = conan.steps.findByName("updateLambdaAliasStep");
 			step.parameters.should.eql(lambda);
 		});
 	});
 
-	describe(".lambda(name)", () => {
-		beforeEach(() => {
+	describe(".lambda(name)", function () {
+		beforeEach(function () {
 			name = "MyLambda";
 
 			lambda = lambda.lambda(name);
 		});
 
-		it("should return an instance of ConanAwsLambda", () => {
-			lambda.should.be.instanceOf(ConanAwsLambda);
+		it("should return an instance of ConanAwsLambda", function () {
+			lambda.should.be.instanceOf(_conanAwsLambda2.default);
 		});
 
-		it("should pass conan to the ConanAwsLambda constructor", () => {
+		it("should pass conan to the ConanAwsLambda constructor", function () {
 			lambda.conan.should.eql(conan);
 		});
 
-		it("should pass the lambda name to the ConanAwsLambda constructor", () => {
+		it("should pass the lambda name to the ConanAwsLambda constructor", function () {
 			lambda.name().should.eql(name);
 		});
 	});
