@@ -38,7 +38,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 _temp2.default.track();
 
-describe(".buildPackageStep(conan, context, stepDone)", function () {
+xdescribe(".buildPackageStep(conan, context, stepDone)", function () {
 	var mockConan = undefined,
 	    context = undefined,
 	    mockLambda = undefined,

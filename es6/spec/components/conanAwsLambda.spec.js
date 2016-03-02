@@ -1,6 +1,8 @@
 import ConanAwsLambda from "../../lib/components/conanAwsLambda.js";
+import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 import Conan, { ConanComponent } from "conan";
 import inflect from "jargon";
+import sinon from "sinon";
 
 describe("ConanAwsLambda(conan, name)", () => {
 	let lambda;
@@ -15,6 +17,8 @@ describe("ConanAwsLambda(conan, name)", () => {
 		role = "SomeRole";
 
 		conan = new Conan();
+		conan.use(ConanAwsLambdaPlugin);
+
 		lambda = new ConanAwsLambda(conan, name);
 		lambda.filePath(filePath).role(role);
 	});
@@ -121,7 +125,7 @@ describe("ConanAwsLambda(conan, name)", () => {
 
 	describe("(steps)", () => {
 		it("should add a validate lambda step", () => {
-			const step = conan.steps.findByName("validateLambda");
+			const step = conan.steps.findByName("validateLambdaStep");
 			step.parameters.should.eql(lambda);
 		});
 

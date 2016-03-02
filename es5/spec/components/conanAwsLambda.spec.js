@@ -4,6 +4,10 @@ var _conanAwsLambda = require("../../lib/components/conanAwsLambda.js");
 
 var _conanAwsLambda2 = _interopRequireDefault(_conanAwsLambda);
 
+var _conanAwsLambdaPlugin = require("../../lib/conanAwsLambdaPlugin.js");
+
+var _conanAwsLambdaPlugin2 = _interopRequireDefault(_conanAwsLambdaPlugin);
+
 var _conan = require("conan");
 
 var _conan2 = _interopRequireDefault(_conan);
@@ -11,6 +15,10 @@ var _conan2 = _interopRequireDefault(_conan);
 var _jargon = require("jargon");
 
 var _jargon2 = _interopRequireDefault(_jargon);
+
+var _sinon = require("sinon");
+
+var _sinon2 = _interopRequireDefault(_sinon);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27,6 +35,8 @@ describe("ConanAwsLambda(conan, name)", function () {
 		role = "SomeRole";
 
 		conan = new _conan2.default();
+		conan.use(_conanAwsLambdaPlugin2.default);
+
 		lambda = new _conanAwsLambda2.default(conan, name);
 		lambda.filePath(filePath).role(role);
 	});
@@ -114,7 +124,7 @@ describe("ConanAwsLambda(conan, name)", function () {
 
 	describe("(steps)", function () {
 		it("should add a validate lambda step", function () {
-			var step = conan.steps.findByName("validateLambda");
+			var step = conan.steps.findByName("validateLambdaStep");
 			step.parameters.should.eql(lambda);
 		});
 

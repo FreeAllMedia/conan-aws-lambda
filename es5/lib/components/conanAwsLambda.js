@@ -112,7 +112,33 @@ var ConanAwsLambda = function (_ConanComponent) {
 	}, {
 		key: "lambda",
 		value: function lambda(name) {
-			return new ConanAwsLambda(this.conan, name);
+			return this.conan.lambda(name);
+		}
+	}, {
+		key: "invoke",
+		value: function invoke(payload, callback) {
+			if (this.conan.config.region === undefined) {
+				var error = new Error("conan.config.region is required to use .invoke().");
+				callback(error);
+			} else {
+				var AWS = this.conan.steps.libraries.AWS;
+
+				var lambda = new AWS.Lambda({
+					region: this.conan.config.region
+				});
+
+				lambda.invoke({
+					FunctionName: this.name(),
+					Qualifier: this.alias(),
+					Payload: JSON.stringify(payload)
+				}, function (error, data) {
+					if (error) {
+						callback(error);
+					} else {
+						callback(null, JSON.parse(data));
+					}
+				});
+			}
 		}
 	}]);
 

@@ -64,10 +64,6 @@ describe("ConanAwsLambdaPlugin(conan)", function () {
 		_typeof(conan.lambda).should.eql("function");
 	});
 
-	it("should setup an empty object to hold lambdas at conan.lambdas", function () {
-		conan.lambdas.should.eql({});
-	});
-
 	describe("(Libraries)", function () {
 		before(function () {
 			conan = new _conan2.default();
@@ -90,7 +86,6 @@ describe("ConanAwsLambdaPlugin(conan)", function () {
 
 		beforeEach(function () {
 			name = "AccountCreate";
-
 			lambda = conan.lambda(name);
 		});
 
