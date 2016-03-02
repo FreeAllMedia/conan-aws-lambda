@@ -6,7 +6,7 @@ import sinon from "sinon";
 
 temp.track();
 
-describe(".compileLambdaZipStep(conan, context, stepDone) classHandler", () => {
+describe(".compileLambdaZipStep(conan, context, stepDone) fileSystem", () => {
 	let conan,
 			context,
 

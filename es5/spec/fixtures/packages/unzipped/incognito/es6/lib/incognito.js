@@ -1,14 +1,8 @@
-"use strict";
+let weakMap = new WeakMap();
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = privateData;
-var weakMap = new WeakMap();
-
-function privateData(object) {
+export default function privateData (object) {
     if (!weakMap.has(object)) {
-        weakMap.set(object, {});
-    }
+			weakMap.set(object, {});
+		}
     return weakMap.get(object);
 }

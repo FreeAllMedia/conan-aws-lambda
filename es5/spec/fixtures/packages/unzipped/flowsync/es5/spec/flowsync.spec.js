@@ -113,7 +113,7 @@ describe("flowsync", function () {
 				finish();
 			});
 
-			iteratorFunction = function iteratorFunction(item, finish) {
+			iteratorFunction = function (item, finish) {
 				itemSpy(item, finish);
 			};
 
@@ -157,7 +157,7 @@ describe("flowsync", function () {
 				setTimeout(finish, 1);
 			})];
 
-			iteratorFunction = function iteratorFunction(item, finish) {
+			iteratorFunction = function (item, finish) {
 				itemSpy[item](item, finish);
 			};
 
@@ -300,7 +300,7 @@ describe("flowsync", function () {
 		beforeEach(function () {
 			values = [1, 2, 3];
 			iterator = sinon.spy();
-			iteratorWrapper = function iteratorWrapper(value, completed) {
+			iteratorWrapper = function (value, completed) {
 				iterator(value);
 				setTimeout(completed, 100);
 			};
@@ -331,7 +331,7 @@ describe("flowsync", function () {
 		beforeEach(function () {
 			values = [1, 2, 3];
 			iterator = sinon.spy();
-			iteratorWrapper = function iteratorWrapper(value, completed) {
+			iteratorWrapper = function (value, completed) {
 				iterator(value);
 				setTimeout(completed, 100);
 			};

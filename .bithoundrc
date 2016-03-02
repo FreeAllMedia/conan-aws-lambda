@@ -1,6 +1,7 @@
 {
   "ignore": [
     "es5/**/*",
-		"documenation/**/*"
+		"documenation/**/*",
+		"es6/spec/fixtures/**/*"
   ]
 }

@@ -1,6 +1,4 @@
-"use strict";
-
-if (!global._babelPolyfill) {
+if(!global._babelPolyfill) {
 	require("babel-polyfill");
 }
 

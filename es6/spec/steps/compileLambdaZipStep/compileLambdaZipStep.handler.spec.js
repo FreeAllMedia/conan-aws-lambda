@@ -65,33 +65,31 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 		});
 	});
 
-	describe("(When .handler is a file path)", () => {
-		it("should move the lambda file path to dependencies", () => {
-			conanAwsLambda.dependencies.calledWith(lambdaFilePath).should.be.true;
-		});
-		it("should set the handler file path as the lambda file path", () => {
-			conanAwsLambda.filePath.calledWith(handlerFilePath).should.be.true;
-		});
+	it("should move the lambda file path to dependencies", () => {
+		conanAwsLambda.dependencies.calledWith(lambdaFilePath).should.be.true;
+	});
+	it("should set the handler file path as the lambda file path", () => {
+		conanAwsLambda.filePath.calledWith(handlerFilePath).should.be.true;
+	});
 
-		it("should insert the lambda file, the dependency, and its packages into the zip file", done => {
-			/* eslint-disable new-cap */
-			let zipFilePaths = [];
+	it("should insert the lambda file, the dependency, and its packages into the zip file", done => {
+		/* eslint-disable new-cap */
+		let zipFilePaths = [];
 
-			fileSystem.createReadStream(stepReturnData.lambdaZipFilePath)
-				.pipe(unzip.Parse())
-				.on("entry", (entry) => {
-					zipFilePaths.push(entry.path);
-				})
-				.on("close", () => {
-					const expectedFilePaths = [
-						"spec/fixtures/lambda.js",
-						"customHandler.js"
-					];
+		fileSystem.createReadStream(stepReturnData.lambdaZipFilePath)
+			.pipe(unzip.Parse())
+			.on("entry", (entry) => {
+				zipFilePaths.push(entry.path);
+			})
+			.on("close", () => {
+				const expectedFilePaths = [
+					"spec/fixtures/lambda.js",
+					"customHandler.js"
+				];
 
-					zipFilePaths.should.have.members(expectedFilePaths);
+				zipFilePaths.should.have.members(expectedFilePaths);
 
-					done();
-				});
-		});
+				done();
+			});
 	});
 });
