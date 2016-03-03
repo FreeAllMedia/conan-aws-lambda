@@ -1,5 +1,5 @@
 export default function createRoleStep(conan, context, stepDone) {
-	if(!context.results.roleArn) {
+	if (!context.results.roleArn) {
 		const AWS = context.libraries.AWS;
 		const iam = new AWS.IAM({
 			region: conan.config.region

@@ -9,11 +9,8 @@ describe("lambda.invoke(payload, callback)", () => {
 			lambdaConstructorSpy,
 
 			invoke,
-			invokeParameters,
 			invokeError,
 			invokeReturnData;
-
-
 
 	class MockAWSLambda {
 		constructor(...options) {
@@ -47,8 +44,7 @@ describe("lambda.invoke(payload, callback)", () => {
 		invokeReturnData = "";
 
 		invoke = MockAWSLambda.prototype.invoke = sinon.spy((parameters, invokeCallback) => {
-			invokeParameters = parameters;
-
+			/* eslint-disable quotes */
 			invokeReturnData = `{"message": "Hello, World!"}`;
 
 			invokeCallback(null, invokeReturnData);

@@ -38,7 +38,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 			filePath() 			{	return lambdaFilePath; }
 			name() 		 			{	return "TestFunction"; }
 			dependencies(value) 	{
-				if(value) {
+				if (value) {
 					dependenciesSpy(value);
 				}
 				return dependencyFilePaths;
@@ -120,7 +120,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 			fileSystem.createReadStream(stepReturnData.lambdaZipFilePath)
 				.pipe(unzip.Parse())
 				.on("entry", (entry) => {
-					if(entry.path.match(/conanHandler\-[a-zA-Z0-9.]*/)) {
+					if (entry.path.match(/conanHandler\-[a-zA-Z0-9.]*/)) {
 						zipFilePaths.push(entry.path);
 					}
 				})
@@ -141,7 +141,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 			fileSystem.createReadStream(stepReturnData.lambdaZipFilePath)
 				.pipe(unzip.Parse())
 				.on("entry", (entry) => {
-					if(!entry.path.match(/conanHandler\-[a-zA-Z0-9.]*/)) {
+					if (!entry.path.match(/conanHandler\-[a-zA-Z0-9.]*/)) {
 						zipFilePaths.push(entry.path);
 					}
 				})
@@ -174,7 +174,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 			fileSystem.createReadStream(stepReturnData.lambdaZipFilePath)
 				.pipe(unzip.Parse())
 				.on("entry", (entry) => {
-					if(!entry.path.match(/conanHandler\-[a-zA-Z0-9.]*/)) {
+					if (!entry.path.match(/conanHandler\-[a-zA-Z0-9.]*/)) {
 						zipFilePaths.push(entry.path);
 					}
 				})

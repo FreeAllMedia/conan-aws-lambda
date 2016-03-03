@@ -12,25 +12,25 @@ export default function createLambdaAliasStep(conan, context, stepDone) {
 		(alias, next) => {
 			const aliasName = alias[0];
 			let aliasVersion;
-			if(alias.length > 1) {
+			if (alias.length > 1) {
 				aliasVersion = alias[1];
 			} else {
 				aliasVersion = "$LATEST";
 			}
 
 			let aliasExists;
-			if(context.results.aliases) {
+			if (context.results.aliases) {
 				aliasExists = context.results.aliases[aliasName];
 			}
 
-			if(!aliasExists) {
+			if (!aliasExists) {
 				iam.createAlias({
 					"FunctionName": context.parameters.name(),
 					"FunctionVersion": aliasVersion,
 					"Name": aliasName,
 					"Description": "conan auto created alias"
 				}, (error, responseData) => {
-					if(responseData) {
+					if (responseData) {
 						result[aliasName] = {
 							aliasArn: responseData.AliasArn,
 							functionVersion: responseData.FunctionVersion
