@@ -46,7 +46,7 @@ describe(".buildPackageStep(conan, context, stepDone)", () => {
 		mockAkiro = {
 			package: sinon.spy((packages, outputDirectory, packageCallback) => {
 				fileSystem.mkdirSync(outputDirectory);
-				fileSystem.copySync(mockPackagesDirectoryPath, `${temporaryDirectoryPath}/zip`);
+				fileSystem.copySync(mockPackagesDirectoryPath, `${temporaryDirectoryPath}/packages`);
 				packageCallback();
 			})
 		};
@@ -86,19 +86,25 @@ describe(".buildPackageStep(conan, context, stepDone)", () => {
 			});
 
 			it("should return the built packages temporary directory path", () => {
-				const expectedPackagesDirectoryPath = `${context.temporaryDirectoryPath}/zip`;
+				const expectedPackagesDirectoryPath = `${context.temporaryDirectoryPath}/packages`;
 				stepReturnData.should.eql({
 					packagesDirectoryPath: expectedPackagesDirectoryPath
 				});
 			});
 
 			it("should put all of the built files into the temporary directory path", () => {
-				let expectedFilePaths = glob.sync(`${mockPackagesDirectoryPath}/**/*`, { dot: true });
+				let expectedFilePaths = glob.sync("**/*", {
+					dot: true,
+					cwd: mockPackagesDirectoryPath
+				});
 
 				expectedFilePaths = expectedFilePaths.map(filePath => {
-					return filePath.replace(mockPackagesDirectoryPath, stepReturnData.packagesDirectoryPath);
+					return filePath.replace(mockPackagesDirectoryPath, "");
 				});
-				const actualFilePaths = glob.sync(`${stepReturnData.packagesDirectoryPath}/**/*`, { dot: true });
+				const actualFilePaths = glob.sync("**/*", {
+					dot: true,
+					cwd: stepReturnData.packagesDirectoryPath
+				});
 				actualFilePaths.should.eql(expectedFilePaths);
 			});
 		});

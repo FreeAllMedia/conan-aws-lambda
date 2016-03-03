@@ -47,7 +47,10 @@ describe("lambda.invoke(payload, callback)", () => {
 			/* eslint-disable quotes */
 			invokeReturnData = `{"message": "Hello, World!"}`;
 
-			invokeCallback(null, invokeReturnData);
+			invokeCallback(null, {
+				StatusCode: 200,
+				Payload: invokeReturnData
+			});
 		});
 
 		lambdaName = "MyLambda";
@@ -67,7 +70,6 @@ describe("lambda.invoke(payload, callback)", () => {
 		lambda.invoke(payload, () => {
 			invoke.calledWith({
 				FunctionName: lambda.name(),
-				Qualifier: lambda.alias(),
 				Payload: JSON.stringify(payload)
 			}).should.be.true;
 			done();
@@ -87,11 +89,23 @@ describe("lambda.invoke(payload, callback)", () => {
 	});
 
 	describe("(When successful)", () => {
-		it("should return the JSON parsed payload from AWS Lambda", () => {
+		it("should return the status code from AWS Lambda", () => {
 			lambda.invoke(payload, (error, data) => {
-				data.should.eql(JSON.parse(invokeReturnData));
+				data.statusCode.should.eql(200);
 			});
 		});
+
+		it("should return the JSON parsed payload from AWS Lambda", () => {
+			lambda.invoke(payload, (error, data) => {
+				data.payload.should.eql(JSON.parse(invokeReturnData));
+			});
+		});
+
+		// it("should return the status code from AWS Lambda", () => {
+		// 	lambda.invoke(payload, (error, data) => {
+		// 		data.statusCode.should.eql(200);
+		// 	});
+		// });
 	});
 
 	describe("(When AWS Lambda returns an error)", () => {

@@ -127,15 +127,23 @@ var ConanAwsLambda = function (_ConanComponent) {
 					region: this.conan.config.region
 				});
 
-				lambda.invoke({
+				var parameters = {
 					FunctionName: this.name(),
-					Qualifier: this.alias(),
 					Payload: JSON.stringify(payload)
-				}, function (error, data) {
+				};
+
+				if (this.alias().length > 0) {
+					parameters.Qualifier = this.alias();
+				}
+
+				lambda.invoke(parameters, function (error, data) {
 					if (error) {
 						callback(error);
 					} else {
-						callback(null, JSON.parse(data));
+						callback(null, {
+							statusCode: data.StatusCode,
+							payload: JSON.parse(data.Payload)
+						});
 					}
 				});
 			}

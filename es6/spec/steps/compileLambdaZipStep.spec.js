@@ -183,7 +183,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 				})
 				.on("close", () => {
 					expectedFilePaths = expectedFilePaths.map(filePath => {
-						return filePath.replace(path.normalize(context.results.packagesDirectoryPath), "");
+						return filePath.replace(path.normalize(context.results.packagesDirectoryPath), "node_modules/");
 					});
 
 					zipFilePaths = zipFilePaths.map(filePath => {

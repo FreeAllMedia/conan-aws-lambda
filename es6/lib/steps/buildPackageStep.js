@@ -1,3 +1,5 @@
+import fileSystem from "fs-extra";
+
 export default function buildPackageStep(conan, context, stepDone) {
 	const conanAwsLambda = context.parameters;
 
@@ -7,7 +9,7 @@ export default function buildPackageStep(conan, context, stepDone) {
 			bucket: conan.config.bucket
 		});
 
-		const tempZipDirectoryPath = `${context.temporaryDirectoryPath}/zip`;
+		const tempZipDirectoryPath = `${context.temporaryDirectoryPath}/packages`;
 
 		akiro.package(conanAwsLambda.packages(), tempZipDirectoryPath, akiroError => {
 			if (akiroError) {

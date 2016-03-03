@@ -21,6 +21,11 @@
     }
   ],
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "moment": "^2.11.2"
+  },
+  "devDependencies": {
+    "conan": "0.0.24",
+    "conan-aws-lambda": "0.0.8"
+  }
 }
