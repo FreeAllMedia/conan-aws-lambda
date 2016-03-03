@@ -28,7 +28,7 @@ function buildPackageStep(conan, context, stepDone) {
 		})();
 	} else {
 		stepDone(null, {
-			packageZipFilePath: null
+			packagesDirectoryPath: null
 		});
 	}
 }

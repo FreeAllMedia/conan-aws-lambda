@@ -127,9 +127,9 @@ describe(".buildPackageStep(conan, context, stepDone)", () => {
 			buildPackageStep(mockConan, context, stepDone(done));
 		});
 
-		it("should return with the package zip file path set to null", () => {
+		it("should return with the packages directory path to null", () => {
 			stepReturnData.should.eql({
-				packageZipFilePath: null
+				packagesDirectoryPath: null
 			});
 		});
 	});

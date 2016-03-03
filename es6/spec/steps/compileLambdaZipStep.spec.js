@@ -5,6 +5,7 @@ import unzip from "unzip2";
 import temp from "temp";
 import sinon from "sinon";
 import path from "path";
+import glob from "glob";
 
 describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 	let conan,
@@ -13,7 +14,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 
 			lambdaFilePath,
 			dependencyFilePaths,
-			packageZipFilePath,
+			packagesDirectoryPath,
 
 			dependenciesSpy,
 
@@ -30,7 +31,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 		dependenciesSpy = sinon.spy();
 
 		dependencyFilePaths = [];
-		packageZipFilePath = undefined;
+		packagesDirectoryPath = undefined;
 
 		lambdaFilePath = __dirname + "/../fixtures/lambda.js";
 
@@ -52,7 +53,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 				parameters: conanAwsLambda,
 				libraries: {},
 				results: {
-					packageZipFilePath: packageZipFilePath
+					packagesDirectoryPath: packagesDirectoryPath
 				}
 			};
 
@@ -162,14 +163,16 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 		});
 	});
 
-	describe("(With a package zip file)", () => {
+	describe("(With packages directory path)", () => {
 		beforeEach(done => {
-			context.results.packageZipFilePath = __dirname + "/../fixtures/packages.zip";
+			context.results.packagesDirectoryPath = path.normalize(__dirname + "/../fixtures/packages/unzipped/");
 			compileLambdaZipStep(conan, context, stepDone(done));
 		});
 
 		it("should insert the lambda file, the dependency, and its packages into the zip file", done => {
 			let zipFilePaths = [];
+
+			let expectedFilePaths = glob.sync(`${context.results.packagesDirectoryPath}/**/*`, { dot: true });
 
 			fileSystem.createReadStream(stepReturnData.lambdaZipFilePath)
 				.pipe(unzip.Parse())
@@ -179,21 +182,19 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 					}
 				})
 				.on("close", () => {
-					const expectedFilePaths = [
-						"node_modules/async/.jshintrc",
-						"node_modules/async/.travis.yml",
-						"node_modules/async/CHANGELOG.md",
-						"node_modules/async/LICENSE",
-						"node_modules/async/README.md",
-						"node_modules/async/bower.json",
-						"node_modules/async/component.json",
-						"node_modules/async/lib/async.js",
-						"node_modules/async/package.json",
-						"node_modules/async/support/sync-package-managers.js"
-					];
+					expectedFilePaths = expectedFilePaths.map(filePath => {
+						return filePath.replace(path.normalize(context.results.packagesDirectoryPath), "");
+					});
+
+					zipFilePaths = zipFilePaths.map(filePath => {
+						if (filePath.substr(-1) === "/") {
+							return filePath.substr(0, filePath.length - 1);
+						} else {
+							return filePath;
+						}
+					});
 
 					zipFilePaths.should.have.members(expectedFilePaths);
-
 					done();
 				});
 		});

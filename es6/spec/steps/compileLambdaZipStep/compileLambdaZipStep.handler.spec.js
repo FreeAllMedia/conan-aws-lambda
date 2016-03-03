@@ -21,7 +21,7 @@ describe(".compileLambdaZipStep(conan, context, stepDone)", () => {
 
 	beforeEach(done => {
 		conan = new Conan({
-			basePath: `${__dirname}../../../../../es6`,
+			basePath: `${__dirname}/../../../../es6`,
 			region: "us-east-1"
 		});
 
