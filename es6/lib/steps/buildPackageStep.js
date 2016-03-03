@@ -1,5 +1,3 @@
-import fileSystem from "fs-extra";
-
 export default function buildPackageStep(conan, context, stepDone) {
 	const conanAwsLambda = context.parameters;
 
