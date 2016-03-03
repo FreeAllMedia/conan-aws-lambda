@@ -4,7 +4,6 @@ import sinon from "sinon";
 import fileSystem from "fs";
 import temp from "temp";
 import path from "path";
-import inflect from "jargon";
 
 temp.track();
 
@@ -22,7 +21,6 @@ describe(".upsertLambdaStep(conan, context, stepDone)", () => {
 			updateFunctionConfigurationError,
 			updateFunctionConfigurationData,
 
-			stepReturnError,
 			stepReturnData,
 
 			parameters,
@@ -117,7 +115,6 @@ describe(".upsertLambdaStep(conan, context, stepDone)", () => {
 
 		stepDone = (afterStepCallback) => {
 			return (error, data) => {
-				stepReturnError = error;
 				stepReturnData = data;
 				afterStepCallback();
 			};

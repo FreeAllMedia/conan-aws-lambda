@@ -3,8 +3,6 @@ import sinon from "sinon";
 import fileSystem from "fs-extra";
 import path from "path";
 import temp from "temp";
-import unzip from "unzip2";
-import inflect from "jargon";
 import glob from "glob";
 
 temp.track();

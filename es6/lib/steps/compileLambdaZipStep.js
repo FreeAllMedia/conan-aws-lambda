@@ -6,7 +6,6 @@ import inflect from "jargon";
 import glob from "glob";
 import Async from "flowsync";
 import hacher from "hacher";
-import { isClass } from "proven";
 
 function relativePath(fullPath, basePath) {
 	const normalizedFullPath = path.normalize(fullPath);
