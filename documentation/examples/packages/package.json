@@ -1,7 +1,7 @@
 {
-  "name": "conan-aws-lambda-hello-world",
+  "name": "conan-aws-lambda-packages",
   "version": "0.1.0",
-  "description": "Hello, World! example for conan-aws-lambda",
+  "description": "Example using packages for conan-aws-lambda",
   "scripts": {
     "test": "gulp test"
   },
