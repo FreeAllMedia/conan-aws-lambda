@@ -4,7 +4,7 @@ import ConanAwsLambda from "conan-aws-lambda";
 
 const conan = new Conan({
 	region: "us-east-1",
-	bucket: "my-akiro-packages"
+	bucket: "my-akiro-bucket"
 });
 
 conan.use(ConanAwsLambda);

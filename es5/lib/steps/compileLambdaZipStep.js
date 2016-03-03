@@ -119,7 +119,7 @@ function compileLambdaZipStep(conan, context, stepDone) {
 
 	function appendPackages(done) {
 		if (packagesDirectoryPath) {
-			lambdaZip.directory(packagesDirectoryPath, "");
+			lambdaZip.directory(packagesDirectoryPath, "node_modules");
 			//
 			// const packageFilePaths = glob.sync(`${packagesDirectoryPath}/**/*`, { dot: true });
 			//

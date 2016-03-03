@@ -80,15 +80,23 @@ export default class ConanAwsLambda extends ConanComponent {
 				region: this.conan.config.region
 			});
 
-			lambda.invoke({
+			const parameters = {
 				FunctionName: this.name(),
-				Qualifier: this.alias(),
 				Payload: JSON.stringify(payload)
-			}, (error, data) => {
+			};
+
+			if (this.alias().length > 0) {
+				parameters.Qualifier = this.alias();
+			}
+
+			lambda.invoke(parameters, (error, data) => {
 				if (error) {
 					callback(error);
 				} else {
-					callback(null, JSON.parse(data));
+					callback(null, {
+						statusCode: data.StatusCode,
+						payload: JSON.parse(data.Payload)
+					});
 				}
 			});
 		}

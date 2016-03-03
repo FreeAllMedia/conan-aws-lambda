@@ -4,6 +4,13 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 exports.default = buildPackageStep;
+
+var _fsExtra = require("fs-extra");
+
+var _fsExtra2 = _interopRequireDefault(_fsExtra);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function buildPackageStep(conan, context, stepDone) {
 	var conanAwsLambda = context.parameters;
 
@@ -14,7 +21,7 @@ function buildPackageStep(conan, context, stepDone) {
 				bucket: conan.config.bucket
 			});
 
-			var tempZipDirectoryPath = context.temporaryDirectoryPath + "/zip";
+			var tempZipDirectoryPath = context.temporaryDirectoryPath + "/packages";
 
 			akiro.package(conanAwsLambda.packages(), tempZipDirectoryPath, function (akiroError) {
 				if (akiroError) {
