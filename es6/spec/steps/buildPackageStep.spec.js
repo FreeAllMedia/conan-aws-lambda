@@ -1,6 +1,6 @@
 import buildPackageStep from "../../lib/steps/buildPackageStep.js";
 import sinon from "sinon";
-import fileSystem from "fs";
+import fileSystem from "fs-extra";
 import path from "path";
 import temp from "temp";
 import unzip from "unzip2";
@@ -9,14 +9,17 @@ import glob from "glob";
 
 temp.track();
 
-xdescribe(".buildPackageStep(conan, context, stepDone)", () => {
+describe(".buildPackageStep(conan, context, stepDone)", () => {
 	let mockConan,
 			context,
 
 			mockLambda,
 
 			akiroConstructorSpy,
-			mockAkiro;
+			mockAkiro,
+
+			mockPackagesDirectoryPath,
+			temporaryDirectoryPath;
 
 
 	class MockAkiro {
@@ -38,9 +41,14 @@ xdescribe(".buildPackageStep(conan, context, stepDone)", () => {
 			name: () => { return "MyLambda"; }
 		};
 
+		temporaryDirectoryPath = temp.mkdirSync("buildPackageStep");
+
+		mockPackagesDirectoryPath = path.normalize(`${__dirname}/../fixtures/packages/unzipped`);
+
 		mockAkiro = {
 			package: sinon.spy((packages, outputDirectory, packageCallback) => {
 				fileSystem.mkdirSync(outputDirectory);
+				fileSystem.copySync(mockPackagesDirectoryPath, `${temporaryDirectoryPath}/zip`);
 				packageCallback();
 			})
 		};
@@ -48,7 +56,7 @@ xdescribe(".buildPackageStep(conan, context, stepDone)", () => {
 		akiroConstructorSpy = sinon.spy();
 
 		context = {
-			temporaryDirectoryPath: temp.mkdirSync("buildPackageStep"),
+			temporaryDirectoryPath: temporaryDirectoryPath,
 			libraries: {
 				Akiro: MockAkiro
 			},
@@ -67,39 +75,51 @@ xdescribe(".buildPackageStep(conan, context, stepDone)", () => {
 			buildPackageStep(mockConan, context, stepDone(done));
 		});
 
-		it("should configure akiro with the designated options", () => {
-			akiroConstructorSpy.calledWith({
-				region: mockConan.config.region,
-				bucket: mockConan.config.bucket
-			}).should.be.true;
-		});
+		describe("(when successful)", () => {
+			it("should configure akiro with the designated options", () => {
+				akiroConstructorSpy.calledWith({
+					region: mockConan.config.region,
+					bucket: mockConan.config.bucket
+				}).should.be.true;
+			});
 
-		it("should call akiro.package with the specified packages", () => {
-			mockAkiro.package.calledWith(mockLambda.packages()).should.be.true;
-		});
+			it("should call akiro.package with the specified packages", () => {
+				mockAkiro.package.calledWith(mockLambda.packages()).should.be.true;
+			});
 
-		it("should return the package zip file path", () => {
-			const expectedPackageZipFilePath = `${context.temporaryDirectoryPath}/zip/${inflect(mockLambda.name()).camel.toString()}.packages.zip`;
-			stepReturnData.should.eql({
-				packageZipFilePath: expectedPackageZipFilePath
+			it("should return the built packages temporary directory path", () => {
+				const expectedPackagesDirectoryPath = `${context.temporaryDirectoryPath}/zip`;
+				stepReturnData.should.eql({
+					packagesDirectoryPath: expectedPackagesDirectoryPath
+				});
+			});
+
+			it("should put all of the built files into the temporary directory path", () => {
+				let expectedFilePaths = glob.sync(`${mockPackagesDirectoryPath}/**/*`, { dot: true });
+
+				expectedFilePaths = expectedFilePaths.map(filePath => {
+					return filePath.replace(mockPackagesDirectoryPath, stepReturnData.packagesDirectoryPath);
+				});
+				const actualFilePaths = glob.sync(`${stepReturnData.packagesDirectoryPath}/**/*`, { dot: true });
+				actualFilePaths.should.eql(expectedFilePaths);
 			});
 		});
 
-		it("should generate a zip file containing all of the built packages at the package zip file path", done => {
-			const expectedPackageZipFilePath = `${context.temporaryDirectoryPath}/zip/${inflect(mockLambda.name()).camel.toString()}.packages.zip`;
-			const expectedFilePaths = glob.sync(`${context.temporaryDirectoryPath}/zip/`);
+		describe("(when akiro errors)", () => {
+			let error;
 
-			let zipFilePaths = [];
-
-			fileSystem.createReadStream(expectedPackageZipFilePath)
-				.pipe(unzip.Parse())
-				.on("entry", entry => {
-					zipFilePaths.push(entry.path);
-				})
-				.on("close", () => {
-					zipFilePaths.should.have.members(expectedFilePaths);
-					done();
+			beforeEach(done => {
+				mockAkiro.package = sinon.spy((packages, outputDirectory, packageCallback) => {
+					error = new Error();
+					packageCallback(error);
 				});
+
+				buildPackageStep(mockConan, context, stepDone(done));
+			});
+
+			it("should return the akiro error in the callback", () => {
+				stepReturnError.should.eql(error);
+			});
 		});
 	});
 
