@@ -17,6 +17,10 @@ var _archiver = require("archiver");
 
 var _archiver2 = _interopRequireDefault(_archiver);
 
+var _glob = require("glob");
+
+var _glob2 = _interopRequireDefault(_glob);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function buildPackageStep(conan, context, stepDone) {
@@ -26,22 +30,22 @@ function buildPackageStep(conan, context, stepDone) {
 		(function () {
 			var lambdaName = conanAwsLambda.name();
 			var packageZipFileName = (0, _jargon2.default)(lambdaName).camel.toString() + ".packages.zip";
-			var packageZipFilePath = context.temporaryDirectoryPath + "/zip/" + packageZipFileName;
 
 			var akiro = new context.libraries.Akiro({
 				region: conan.config.region,
 				bucket: conan.config.bucket
 			});
 
-			var tempZipDirectoryPath = context.temporaryDirectoryPath + "/zip/";
+			var tempZipDirectoryPath = context.temporaryDirectoryPath + "/zip";
 
-			akiro.package(conanAwsLambda.packages(), tempZipDirectoryPath, function () {
-				//const zip = archiver.create("zip", {});
-				//zip.directory(tempZipDirectoryPath);
-
-				stepDone(null, {
-					packageZipFilePath: packageZipFilePath
-				});
+			akiro.package(conanAwsLambda.packages(), tempZipDirectoryPath, function (akiroError) {
+				if (akiroError) {
+					stepDone(akiroError);
+				} else {
+					stepDone(null, {
+						packagesDirectoryPath: tempZipDirectoryPath
+					});
+				}
 			});
 		})();
 	} else {
