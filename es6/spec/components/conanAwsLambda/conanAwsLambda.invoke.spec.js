@@ -44,7 +44,7 @@ describe("lambda.invoke(payload, callback)", () => {
 		invokeReturnData = "";
 
 		invoke = MockAWSLambda.prototype.invoke = sinon.spy((parameters, invokeCallback) => {
-			/* eslint-disable quotes */ 
+			/* eslint-disable quotes */
 			invokeReturnData = `{"message": "Hello, World!"}`;
 
 			invokeCallback(null, invokeReturnData);
