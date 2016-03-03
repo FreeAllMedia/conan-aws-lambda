@@ -124,8 +124,6 @@ export default function compileLambdaZipStep(conan, context, stepDone) {
 
 		if (zipPath) {
 			relativeFilePath = `${zipPath}/${relativeFilePath}`;
-		} else {
-			relativeFilePath = relativeFilePath;
 		}
 
 		if (!isDirectory) {

@@ -37,8 +37,6 @@ var _hacher = require("hacher");
 
 var _hacher2 = _interopRequireDefault(_hacher);
 
-var _proven = require("proven");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function relativePath(fullPath, basePath) {
@@ -152,8 +150,6 @@ function compileLambdaZipStep(conan, context, stepDone) {
 
 		if (zipPath) {
 			relativeFilePath = zipPath + "/" + relativeFilePath;
-		} else {
-			relativeFilePath = relativeFilePath;
 		}
 
 		if (!isDirectory) {
