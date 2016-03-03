@@ -4,13 +4,13 @@ export default function findLambdaByNameStep(conan, context, stepDone) {
 		region: conan.config.region
 	});
 	let lambdaName;
-	if(typeof context.parameters.name === "function") {
+	if (typeof context.parameters.name === "function") {
 		lambdaName = context.parameters.name();
 	} else {
 		lambdaName = context.parameters.lambda()[0];
 	}
 
-	if(lambdaName) {
+	if (lambdaName) {
 		lambda.getFunction({
 			"FunctionName": lambdaName
 		}, (error, responseData) => {

@@ -12,7 +12,7 @@ export default function findLambdaAliasStep(conan, context, stepDone) {
 		(alias, next) => {
 			const aliasName = alias[0];
 			let aliasVersion;
-			if(alias.length > 1) {
+			if (alias.length > 1) {
 				aliasVersion = alias[1];
 			} else {
 				aliasVersion = "$LATEST";
@@ -22,20 +22,20 @@ export default function findLambdaAliasStep(conan, context, stepDone) {
 				"FunctionName": context.parameters.name(),
 				"Name": aliasName
 			}, (error, responseData) => {
-				if(responseData && responseData.FunctionVersion === aliasVersion) {
+				if (responseData && responseData.FunctionVersion === aliasVersion) {
 					// alias exists
 					result[aliasName] = {
 						aliasArn: responseData.AliasArn,
 						functionVersion: responseData.FunctionVersion
 					};
 					next();
-				} else if(responseData && responseData.FunctionVersion) {
+				} else if (responseData && responseData.FunctionVersion) {
 					// needs version update
 					result[aliasName] = {
 						aliasArn: responseData.AliasArn
 					};
 					next();
-				} else if(error && error.statusCode === 404) {
+				} else if (error && error.statusCode === 404) {
 					next();
 				} else {
 					next(error);

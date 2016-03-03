@@ -12,13 +12,13 @@ export default function updateLambdaAliasStep(conan, context, stepDone) {
 		(alias, next) => {
 			const aliasName = alias[0];
 			let aliasVersion;
-			if(alias.length > 1) {
+			if (alias.length > 1) {
 				aliasVersion = alias[1];
 			} else {
 				aliasVersion = "$LATEST";
 			}
 
-			if(context.results.aliases
+			if (context.results.aliases
 				&& context.results.aliases[aliasName]
 				&& !context.results.aliases[aliasName].functionVersion) {
 				iam.updateAlias({
@@ -27,7 +27,7 @@ export default function updateLambdaAliasStep(conan, context, stepDone) {
 					"Name": aliasName,
 					"Description": "conan auto updated alias"
 				}, (error, responseData) => {
-					if(responseData) {
+					if (responseData) {
 						result[aliasName] = {
 							aliasArn: responseData.AliasArn,
 							functionVersion: responseData.FunctionVersion
