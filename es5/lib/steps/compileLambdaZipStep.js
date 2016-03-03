@@ -17,10 +17,6 @@ var _fs = require("fs");
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _unzip = require("unzip2");
-
-var _unzip2 = _interopRequireDefault(_unzip);
-
 var _jargon = require("jargon");
 
 var _jargon2 = _interopRequireDefault(_jargon);
@@ -56,7 +52,7 @@ function compileLambdaZipStep(conan, context, stepDone) {
 	/* eslint-disable new-cap */
 	var conanAwsLambda = context.parameters;
 
-	var packageZipFilePath = context.results.packageZipFilePath;
+	var packagesDirectoryPath = context.results.packagesDirectoryPath;
 
 	var handlerFilePath = conanAwsLambda.handler()[1];
 	var handlerName = conanAwsLambda.handler()[0];
@@ -122,15 +118,20 @@ function compileLambdaZipStep(conan, context, stepDone) {
 	}
 
 	function appendPackages(done) {
-		if (packageZipFilePath) {
-			fileSystem.createReadStream(packageZipFilePath).pipe(_unzip2.default.Parse()).on("entry", function (entry) {
-				var isDirectory = entry.path.slice(-1) === "/";
-				if (!isDirectory) {
-					lambdaZip.append(entry, { name: "node_modules/" + entry.path });
-				}
-			}).on("close", function () {
-				packagesAppended();
-			});
+		if (packagesDirectoryPath) {
+			lambdaZip.directory(packagesDirectoryPath, "");
+			//
+			// const packageFilePaths = glob.sync(`${packagesDirectoryPath}/**/*`, { dot: true });
+			//
+			// packageFilePaths.forEach(filePath => {
+			// 	//console.log("filePath", filePath);
+			// 	const fileBuffer = fileSystem.readFileSync(filePath);
+			// 	//console.log("fileBuffer", fileBuffer);
+			// 	//const relativeFilePath = filePath.replace(packagesDirectoryPath, "");
+			// 	//lambdaZip.append(fileBuffer, {name: "node_modules/" + relativeFilePath});
+			// });
+
+			packagesAppended();
 		} else {
 			packagesAppended();
 		}
