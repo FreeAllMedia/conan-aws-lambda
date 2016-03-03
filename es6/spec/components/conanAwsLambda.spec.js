@@ -2,7 +2,6 @@ import ConanAwsLambda from "../../lib/components/conanAwsLambda.js";
 import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 import Conan, { ConanComponent } from "conan";
 import inflect from "jargon";
-import sinon from "sinon";
 
 describe("ConanAwsLambda(conan, name)", () => {
 	let lambda;
