@@ -24,6 +24,6 @@
   "dependencies": {},
 	"devDependencies": {
     "conan": "0.0.24",
-    "conan-aws-lambda": "0.0.9"
+    "conan-aws-lambda": "0.0.11"
   }
 }
