@@ -41,7 +41,7 @@ conan.use(ConanAwsLambda);
 ``` javascript
 conan
 	.lambda("HelloWorld")
-		.description("A simple 'Hello, World!' example!"),
+		.description("A simple 'Hello, World!' example!")
 		.filePath(`helloWorld.js`)
 		.role("MyIamRoleName");
 ```

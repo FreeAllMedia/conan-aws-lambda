@@ -1,6 +1,6 @@
 import archiver from "archiver";
 import path from "path";
-import fs from "fs";
+import fs from "graceful-fs"; // graceful-fs required to avoid file table overflow
 import inflect from "jargon";
 import glob from "glob";
 import Async from "flowsync";

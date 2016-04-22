@@ -1,0 +1,19 @@
+{
+  "name": "conan-aws-lambda-database-connection",
+  "version": "0.1.0",
+  "description": "Example for the amount of time it takes for a database connection to finish",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "author": "Free All Media, LLC",
+  "contributors": [],
+  "license": "MIT",
+  "dependencies": {
+    "mysql": "^2.10.2"
+  },
+  "devDependencies": {
+    "async": "^1.5.2",
+    "conan": "0.0.24",
+    "conan-aws-lambda": "0.0.11"
+  }
+}
