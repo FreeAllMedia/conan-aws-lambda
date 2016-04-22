@@ -1,6 +1,6 @@
 import Conan from "conan";
 import compileLambdaZipStep from "../../lib/steps/compileLambdaZipStep.js";
-import fileSystem from "fs";
+import fileSystem from "graceful-fs";  // graceful-fs required to avoid file table overflow
 import unzip from "unzip2";
 import temp from "temp";
 import sinon from "sinon";

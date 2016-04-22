@@ -13,9 +13,9 @@ var _path = require("path");
 
 var _path2 = _interopRequireDefault(_path);
 
-var _fs = require("fs");
+var _gracefulFs = require("graceful-fs");
 
-var _fs2 = _interopRequireDefault(_fs);
+var _gracefulFs2 = _interopRequireDefault(_gracefulFs);
 
 var _jargon = require("jargon");
 
@@ -34,6 +34,9 @@ var _hacher = require("hacher");
 var _hacher2 = _interopRequireDefault(_hacher);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// graceful-fs required to avoid file table overflow
+
 
 function relativePath(fullPath, basePath) {
 	var normalizedFullPath = _path2.default.normalize(fullPath);
@@ -57,7 +60,7 @@ function compileLambdaZipStep(conan, context, stepDone) {
 	var handlerFilePath = conanAwsLambda.handler()[1];
 	var handlerName = conanAwsLambda.handler()[0];
 
-	var fileSystem = context.fileSystem || _fs2.default;
+	var fileSystem = context.fileSystem || _gracefulFs2.default;
 
 	//the lambda file path is another dependency
 	conanAwsLambda.dependencies(conanAwsLambda.filePath());
