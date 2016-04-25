@@ -69,7 +69,7 @@
     "chai": "^3.0.0",
     "compare-version": "^0.1.2",
     "coveralls": "^2.11.2",
-    "eslint": "^2.2.0",
+    "eslint": "2.2.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.2",
     "gulp-babel-istanbul": "^1.0.0",
