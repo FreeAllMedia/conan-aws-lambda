@@ -1,7 +1,7 @@
 {
   "generatorVersion": "0.2.21",
   "name": "conan-aws-lambda",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "AWS Lambda plugin for Conan: The Deployer.",
   "main": "es5/lib/conanAwsLambdaPlugin.js",
   "scripts": {
