@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.default = createLambdaAliasStep;
+exports.default = createLambdaAlias;
 
 var _flowsync = require("flowsync");
 
@@ -11,7 +11,7 @@ var _flowsync2 = _interopRequireDefault(_flowsync);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createLambdaAliasStep(conan, context, stepDone) {
+function createLambdaAlias(conan, context, stepDone) {
 	var AWS = context.libraries.AWS;
 	var iam = new AWS.Lambda({
 		region: conan.config.region

@@ -8,53 +8,61 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _conan = require("conan");
 
-var _findLambdaByNameStep = require("../steps/findLambdaByNameStep.js");
+var _findLambdaByName = require("../steps/findLambdaByName.js");
 
-var _findLambdaByNameStep2 = _interopRequireDefault(_findLambdaByNameStep);
+var _findLambdaByName2 = _interopRequireDefault(_findLambdaByName);
 
-var _findRoleByNameStep = require("../steps/findRoleByNameStep.js");
+var _findRoleByName = require("../steps/findRoleByName.js");
 
-var _findRoleByNameStep2 = _interopRequireDefault(_findRoleByNameStep);
+var _findRoleByName2 = _interopRequireDefault(_findRoleByName);
 
-var _createRoleStep = require("../steps/createRoleStep.js");
+var _createRole = require("../steps/createRole.js");
 
-var _createRoleStep2 = _interopRequireDefault(_createRoleStep);
+var _createRole2 = _interopRequireDefault(_createRole);
 
-var _attachRolePolicyStep = require("../steps/attachRolePolicyStep.js");
+var _attachRolePolicy = require("../steps/attachRolePolicy.js");
 
-var _attachRolePolicyStep2 = _interopRequireDefault(_attachRolePolicyStep);
+var _attachRolePolicy2 = _interopRequireDefault(_attachRolePolicy);
 
-var _buildPackageStep = require("../steps/buildPackageStep.js");
+var _buildPackage = require("../steps/buildPackage.js");
 
-var _buildPackageStep2 = _interopRequireDefault(_buildPackageStep);
+var _buildPackage2 = _interopRequireDefault(_buildPackage);
 
-var _compileLambdaZipStep = require("../steps/compileLambdaZipStep.js");
+var _compileLambdaZip = require("../steps/compileLambdaZip.js");
 
-var _compileLambdaZipStep2 = _interopRequireDefault(_compileLambdaZipStep);
+var _compileLambdaZip2 = _interopRequireDefault(_compileLambdaZip);
 
-var _upsertLambdaStep = require("../steps/upsertLambdaStep.js");
+var _upsertLambda = require("../steps/upsertLambda.js");
 
-var _upsertLambdaStep2 = _interopRequireDefault(_upsertLambdaStep);
+var _upsertLambda2 = _interopRequireDefault(_upsertLambda);
 
-var _publishLambdaVersionStep = require("../steps/publishLambdaVersionStep.js");
+var _publishLambdaVersion = require("../steps/publishLambdaVersion.js");
 
-var _publishLambdaVersionStep2 = _interopRequireDefault(_publishLambdaVersionStep);
+var _publishLambdaVersion2 = _interopRequireDefault(_publishLambdaVersion);
 
-var _findLambdaAliasStep = require("../steps/findLambdaAliasStep.js");
+var _findLambdaAlias = require("../steps/findLambdaAlias.js");
 
-var _findLambdaAliasStep2 = _interopRequireDefault(_findLambdaAliasStep);
+var _findLambdaAlias2 = _interopRequireDefault(_findLambdaAlias);
 
-var _createLambdaAliasStep = require("../steps/createLambdaAliasStep.js");
+var _createLambdaAlias = require("../steps/createLambdaAlias.js");
 
-var _createLambdaAliasStep2 = _interopRequireDefault(_createLambdaAliasStep);
+var _createLambdaAlias2 = _interopRequireDefault(_createLambdaAlias);
 
-var _updateLambdaAliasStep = require("../steps/updateLambdaAliasStep.js");
+var _updateLambdaAlias = require("../steps/updateLambdaAlias.js");
 
-var _updateLambdaAliasStep2 = _interopRequireDefault(_updateLambdaAliasStep);
+var _updateLambdaAlias2 = _interopRequireDefault(_updateLambdaAlias);
 
-var _validateLambdaStep = require("../steps/validateLambdaStep.js");
+var _validateLambda = require("../steps/validateLambda.js");
 
-var _validateLambdaStep2 = _interopRequireDefault(_validateLambdaStep);
+var _validateLambda2 = _interopRequireDefault(_validateLambda);
+
+var _awsSdk = require("aws-sdk");
+
+var _awsSdk2 = _interopRequireDefault(_awsSdk);
+
+var _incognito = require("incognito");
+
+var _incognito2 = _interopRequireDefault(_incognito);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -76,55 +84,36 @@ var ConanAwsLambda = function (_ConanComponent) {
 	_createClass(ConanAwsLambda, [{
 		key: "initialize",
 		value: function initialize(conan, name) {
-			this.conan = conan;
+			this.properties("name", "filePath", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages", "roleArn", "functionArn");
 
-			this.parameters("name", "filePath", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages");
+			this.properties("handler").multi;
 
-			this.multipleValueParameters("handler");
-
-			this.multipleValueAggregateParameters("dependencies", "alias");
+			this.properties("dependencies", "alias").multi.aggregate;
 
 			/**
     * DEFAULT VALUES
     */
-
 			this.name(name);
-
 			this.handler("handler");
 			this.runtime("nodejs");
 			this.memorySize(128);
 			this.timeout(3);
 
-			// attach steps to conan
-			this.conan.steps.add(_validateLambdaStep2.default, this);
-			this.conan.steps.add(_findLambdaByNameStep2.default, this);
-			this.conan.steps.add(_findRoleByNameStep2.default, this);
-			this.conan.steps.add(_createRoleStep2.default, this);
-			this.conan.steps.add(_attachRolePolicyStep2.default, this);
-			this.conan.steps.add(_buildPackageStep2.default, this);
-			this.conan.steps.add(_compileLambdaZipStep2.default, this);
-			this.conan.steps.add(_upsertLambdaStep2.default, this);
-			this.conan.steps.add(_publishLambdaVersionStep2.default, this);
-			this.conan.steps.add(_findLambdaAliasStep2.default, this);
-			this.conan.steps.add(_createLambdaAliasStep2.default, this);
-			this.conan.steps.add(_updateLambdaAliasStep2.default, this);
-		}
-	}, {
-		key: "lambda",
-		value: function lambda(name) {
-			return this.conan.lambda(name);
+			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackage2.default, _compileLambdaZip2.default, _upsertLambda2.default, _publishLambdaVersion2.default, _findLambdaAlias2.default, _createLambdaAlias2.default, _updateLambdaAlias2.default).apply(this);
+
+			(0, _incognito2.default)(this).conan = conan;
 		}
 	}, {
 		key: "invoke",
 		value: function invoke(payload, callback) {
-			if (this.conan.config.region === undefined) {
+			var conan = (0, _incognito2.default)(this);
+
+			if (conan.config.region === undefined) {
 				var error = new Error("conan.config.region is required to use .invoke().");
 				callback(error);
 			} else {
-				var AWS = this.conan.steps.libraries.AWS;
-
-				var lambda = new AWS.Lambda({
-					region: this.conan.config.region
+				var lambda = new _awsSdk2.default.Lambda({
+					region: conan.config.region
 				});
 
 				var parameters = {

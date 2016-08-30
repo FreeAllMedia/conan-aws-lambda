@@ -17,7 +17,7 @@
 		"lib": "./es5/lib/**/*.js",
 		"spec": "./es5/spec/**/*.spec.js",
 		"sourceSpec": [
-			"./es6/spec/**/*.spec.js",
+			"./es6/spec/**/*validateLambda*.spec.js",
 			"!./es6/spec/fixtures/**/*.spec.js"
 		]
 	}

@@ -1,8 +1,8 @@
 import save from "./save.js";
 
 /* istanbul ignore next */
-export function handler(event, context) {
+export function handler(event, context, callback) {
 	save(event, () => {
-		context.succeed("Saved!");
+		callback(null, "Saved!");
 	});
 }

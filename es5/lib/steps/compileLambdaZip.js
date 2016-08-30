@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.default = compileLambdaZipStep;
+exports.default = compileLambdaZip;
 
 var _archiver = require("archiver");
 
@@ -51,7 +51,7 @@ function relativePath(fullPath, basePath) {
 	return normalizedRelativePath;
 }
 
-function compileLambdaZipStep(conan, context, stepDone) {
+function compileLambdaZip(conan, context, stepDone) {
 	/* eslint-disable new-cap */
 	var conanAwsLambda = context.parameters;
 

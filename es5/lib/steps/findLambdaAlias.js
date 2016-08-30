@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.default = createLambdaAliasStep;
+exports.default = findLambdaAlias;
 
 var _flowsync = require("flowsync");
 
@@ -11,7 +11,7 @@ var _flowsync2 = _interopRequireDefault(_flowsync);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function createLambdaAliasStep(conan, context, stepDone) {
+function findLambdaAlias(conan, context, stepDone) {
 	var AWS = context.libraries.AWS;
 	var iam = new AWS.Lambda({
 		region: conan.config.region
@@ -28,31 +28,29 @@ function createLambdaAliasStep(conan, context, stepDone) {
 			aliasVersion = "$LATEST";
 		}
 
-		var aliasExists = void 0;
-		if (context.results.aliases) {
-			aliasExists = context.results.aliases[aliasName];
-		}
-
-		if (!aliasExists) {
-			iam.createAlias({
-				"FunctionName": context.parameters.name(),
-				"FunctionVersion": aliasVersion,
-				"Name": aliasName,
-				"Description": "conan auto created alias"
-			}, function (error, responseData) {
-				if (responseData) {
-					result[aliasName] = {
-						aliasArn: responseData.AliasArn,
-						functionVersion: responseData.FunctionVersion
-					};
-					next();
-				} else {
-					next(error);
-				}
-			});
-		} else {
-			next();
-		}
+		iam.getAlias({
+			"FunctionName": context.parameters.name(),
+			"Name": aliasName
+		}, function (error, responseData) {
+			if (responseData && responseData.FunctionVersion === aliasVersion) {
+				// alias exists
+				result[aliasName] = {
+					aliasArn: responseData.AliasArn,
+					functionVersion: responseData.FunctionVersion
+				};
+				next();
+			} else if (responseData && responseData.FunctionVersion) {
+				// needs version update
+				result[aliasName] = {
+					aliasArn: responseData.AliasArn
+				};
+				next();
+			} else if (error && error.statusCode === 404) {
+				next();
+			} else {
+				next(error);
+			}
+		});
 	}, function (error) {
 		stepDone(error, { aliases: result });
 	});

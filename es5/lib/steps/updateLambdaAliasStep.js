@@ -21,7 +21,7 @@ function updateLambdaAliasStep(conan, context, stepDone) {
 	var result = context.results.aliases;
 	_flowsync2.default.eachSeries(aliases, function (alias, next) {
 		var aliasName = alias[0];
-		var aliasVersion = undefined;
+		var aliasVersion = void 0;
 		if (alias.length > 1) {
 			aliasVersion = alias[1];
 		} else {
