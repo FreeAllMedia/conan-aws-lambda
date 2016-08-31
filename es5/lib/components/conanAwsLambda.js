@@ -84,7 +84,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 	_createClass(ConanAwsLambda, [{
 		key: "initialize",
 		value: function initialize(conan, name) {
-			this.properties("name", "filePath", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages", "roleArn", "functionArn");
+			this.properties("name", "filePath", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages", "roleArn", "functionArn", "region");
 
 			this.properties("handler").multi;
 
@@ -93,13 +93,26 @@ var ConanAwsLambda = function (_ConanComponent) {
 			/**
     * DEFAULT VALUES
     */
-			this.name(name);
+			this.name(name || null);
 			this.handler("handler");
 			this.runtime("nodejs");
 			this.memorySize(128);
 			this.timeout(3);
+			this.region(conan.region());
+			this.publish(true);
 
-			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackage2.default, _compileLambdaZip2.default, _upsertLambda2.default, _publishLambdaVersion2.default, _findLambdaAlias2.default, _createLambdaAlias2.default, _updateLambdaAlias2.default).apply(this);
+			conan.series(_validateLambda2.default, _findLambdaByName2.default
+			// findRoleByName,
+			// createRole,
+			// attachRolePolicy,
+			// buildPackage,
+			// compileLambdaZip,
+			// upsertLambda,
+			// publishLambdaVersion,
+			// findLambdaAlias,
+			// createLambdaAlias,
+			// updateLambdaAlias
+			).apply(this);
 
 			(0, _incognito2.default)(this).conan = conan;
 		}

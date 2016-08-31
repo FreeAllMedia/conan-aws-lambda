@@ -7,7 +7,7 @@ describe("conanAwsLambda.roleArn([newArn])", () => {
 			conan;
 
 	beforeEach(() => {
-		conan = new Conan();
+		conan = new Conan().use(ConanAwsLambdaPlugin);
 		conan.use(ConanAwsLambdaPlugin);
 
 		roleArn = "arn:aws:iam::123456789012:role/Admin";
@@ -17,6 +17,6 @@ describe("conanAwsLambda.roleArn([newArn])", () => {
 
 	it("should be settable", () => {
 		lambda.roleArn(roleArn);
-		lambda.roleArn.should.eql(roleArn);
+		lambda.roleArn().should.eql(roleArn);
 	});
 });

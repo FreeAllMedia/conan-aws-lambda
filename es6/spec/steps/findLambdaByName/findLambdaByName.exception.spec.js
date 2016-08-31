@@ -4,9 +4,10 @@ import AWS from "aws-sdk-mock";
 import ConanAwsLambda from "../../../lib/components/conanAwsLambda.js";
 import findLambdaByName from "../../../lib/steps/findLambdaByName.js";
 
-describe(".findLambdaByName(conan, lambda, stepDone) (Not Found)", () => {
+describe(".findLambdaByName(conan, lambda, stepDone) (Exception)", () => {
 	let conan,
 			lambda,
+			returnedError,
 			callbackError;
 
 	beforeEach(done => {
@@ -17,9 +18,9 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Not Found)", () => {
 		lambda = new ConanAwsLambda(conan, "NewLambda");
 
 		AWS.mock("Lambda", "getFunction", (parameters, callback) => {
-			const error = new Error();
-			error.statusCode = 404;
-			callback(error);
+			returnedError = new Error();
+			returnedError.statusCode = 500;
+			callback(returnedError);
 		});
 
 		findLambdaByName(conan, lambda, error => {
@@ -30,8 +31,8 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Not Found)", () => {
 
 	afterEach(() => AWS.restore("Lambda", "getFunction"));
 
-	it("should not callback with an error", () => {
-		(callbackError === undefined).should.be.true;
+	it("should callback with the returned error", () => {
+		callbackError.should.eql(returnedError);
 	});
 
 	it("should set lambda.functionArn to null", () => {

@@ -6,5 +6,9 @@ export default class ConanAwsLambdaPlugin {
 		conan.config.basePath = conan.config.basePath || process.cwd();
 
 		conan.component("lambda", ConanAwsLambda);
+
+		conan.properties("region");
+
+		conan.region("us-east-1");
 	}
 }

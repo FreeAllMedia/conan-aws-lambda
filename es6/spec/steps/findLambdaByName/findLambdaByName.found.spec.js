@@ -4,9 +4,11 @@ import AWS from "aws-sdk-mock";
 import ConanAwsLambda from "../../../lib/components/conanAwsLambda.js";
 import findLambdaByName from "../../../lib/steps/findLambdaByName.js";
 
-describe(".findLambdaByName(conan, lambda, stepDone) (Not Found)", () => {
+describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 	let conan,
 			lambda,
+			functionArn,
+			awsParameters,
 			callbackError;
 
 	beforeEach(done => {
@@ -16,10 +18,18 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Not Found)", () => {
 
 		lambda = new ConanAwsLambda(conan, "NewLambda");
 
+		functionArn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
+
 		AWS.mock("Lambda", "getFunction", (parameters, callback) => {
-			const error = new Error();
-			error.statusCode = 404;
-			callback(error);
+			awsParameters = parameters;
+
+			const responseData = {
+				Configuration: {
+					FunctionArn: functionArn
+				},
+				Code: {}
+			};
+			callback(null, responseData);
 		});
 
 		findLambdaByName(conan, lambda, error => {
@@ -34,7 +44,13 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Not Found)", () => {
 		(callbackError === undefined).should.be.true;
 	});
 
-	it("should set lambda.functionArn to null", () => {
-		(lambda.functionArn() === null).should.be.true;
+	it("should call AWS with the correct FunctionName", () => {
+		awsParameters.should.eql({
+			FunctionName: lambda.name()
+		});
+	});
+
+	it("should set lambda.functionArn to the returned FunctionArn", () => {
+		lambda.functionArn().should.eql(functionArn);
 	});
 });

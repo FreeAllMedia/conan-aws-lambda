@@ -1,9 +1,9 @@
 import ConanAwsLambda from "../../../lib/components/conanAwsLambda.js";
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
-import Conan, { ConanPlugin } from "conan";
+import Conan, { ConanComponent } from "conan";
 import inflect from "jargon";
 
-describe("ConanAwsLambda(conan, name)", () => {
+xdescribe("ConanAwsLambda(conan, name)", () => {
 	let lambda,
 			name,
 			filePath,
@@ -15,7 +15,7 @@ describe("ConanAwsLambda(conan, name)", () => {
 		filePath = "/account/create.js";
 		role = "SomeRole";
 
-		conan = new Conan();
+		conan = new Conan().use(ConanAwsLambdaPlugin);
 		conan.use(ConanAwsLambdaPlugin);
 
 		lambda = conan.lambda(name);
@@ -25,8 +25,8 @@ describe("ConanAwsLambda(conan, name)", () => {
 			.role(role);
 	});
 
-	it("should extend ConanPlugin", () => {
-		lambda.should.be.instanceOf(ConanPlugin);
+	it("should extend ConanComponent", () => {
+		lambda.should.be.instanceOf(ConanComponent);
 	});
 
 	it("should save conan to .conan", () => {
@@ -125,7 +125,7 @@ describe("ConanAwsLambda(conan, name)", () => {
 		});
 	});
 
-	describe("(steps)", () => {
+	xdescribe("(steps)", () => {
 		it("should add a validate lambda step", () => {
 			const step = conan.steps.findByName("validateLambdaStep");
 			step.parameters.should.eql(lambda);
@@ -184,26 +184,6 @@ describe("ConanAwsLambda(conan, name)", () => {
 		it("should add an update lambda alias step", () => {
 			const step = conan.steps.findByName("updateLambdaAliasStep");
 			step.parameters.should.eql(lambda);
-		});
-	});
-
-	describe(".lambda(name)", () => {
-		beforeEach(() => {
-			name = "MyLambda";
-
-			lambda = lambda.lambda(name);
-		});
-
-		it("should return an instance of ConanAwsLambda", () => {
-			lambda.should.be.instanceOf(ConanAwsLambda);
-		});
-
-		it("should pass conan to the ConanAwsLambda constructor", () => {
-			lambda.conan.should.eql(conan);
-		});
-
-		it("should pass the lambda name to the ConanAwsLambda constructor", () => {
-			lambda.name().should.eql(name);
 		});
 	});
 });

@@ -2,7 +2,7 @@ import ConanAwsLambda from "../../../lib/components/conanAwsLambda.js";
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import sinon from "sinon";
 
-xdescribe("lambda.invoke(payload, callback)", () => {
+xdescribe("lambda.invoke(payload, callback) (Exception)", () => {
 	let mockConan,
 			lambda,
 			lambdaName,
@@ -56,57 +56,6 @@ xdescribe("lambda.invoke(payload, callback)", () => {
 
 		lambdaName = "MyLambda";
 		lambda = new ConanAwsLambda(mockConan, lambdaName);
-	});
-
-	it("should set the correct region for the lambda constructor", done => {
-		lambda.invoke(payload, () => {
-			lambdaConstructorSpy.calledWith({
-				region: mockConan.config.region
-			}).should.be.true;
-			done();
-		});
-	});
-
-	it("should call AWS Lambda with the correct parameters", done => {
-		lambda.invoke(payload, () => {
-			invoke.calledWith({
-				FunctionName: lambda.name(),
-				Payload: JSON.stringify(payload)
-			}).should.be.true;
-			done();
-		});
-	});
-
-	it("should call AWS Lambda with the correct alias if provided", done => {
-		lambda.alias("development");
-		lambda.invoke(payload, () => {
-			invoke.calledWith({
-				FunctionName: lambda.name(),
-				Qualifier: lambda.alias(),
-				Payload: JSON.stringify(payload)
-			}).should.be.true;
-			done();
-		});
-	});
-
-	describe("(When successful)", () => {
-		it("should return the status code from AWS Lambda", () => {
-			lambda.invoke(payload, (error, data) => {
-				data.statusCode.should.eql(200);
-			});
-		});
-
-		it("should return the JSON parsed payload from AWS Lambda", () => {
-			lambda.invoke(payload, (error, data) => {
-				data.payload.should.eql(JSON.parse(invokeReturnData));
-			});
-		});
-
-		// it("should return the status code from AWS Lambda", () => {
-		// 	lambda.invoke(payload, (error, data) => {
-		// 		data.statusCode.should.eql(200);
-		// 	});
-		// });
 	});
 
 	describe("(When AWS Lambda returns an error)", () => {

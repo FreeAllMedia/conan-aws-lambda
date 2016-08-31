@@ -19,6 +19,10 @@ var ConanAwsLambdaPlugin = function ConanAwsLambdaPlugin(conan) {
 	conan.config.basePath = conan.config.basePath || process.cwd();
 
 	conan.component("lambda", _conanAwsLambda2.default);
+
+	conan.properties("region");
+
+	conan.region("us-east-1");
 };
 
 exports.default = ConanAwsLambdaPlugin;

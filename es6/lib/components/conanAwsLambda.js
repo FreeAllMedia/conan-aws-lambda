@@ -30,7 +30,8 @@ export default class ConanAwsLambda extends ConanComponent {
 			"bucket",
 			"packages",
 			"roleArn",
-			"functionArn"
+			"functionArn",
+			"region"
 		);
 
 		this.properties(
@@ -45,25 +46,27 @@ export default class ConanAwsLambda extends ConanComponent {
 		/**
 		 * DEFAULT VALUES
 		 */
-		this.name(name);
+		this.name(name || null);
 		this.handler("handler");
 		this.runtime("nodejs");
 		this.memorySize(128);
 		this.timeout(3);
+		this.region(conan.region());
+		this.publish(true);
 
 		conan.series(
 			validateLambda,
-			findLambdaByName,
-			findRoleByName,
-			createRole,
-			attachRolePolicy,
-			buildPackage,
-			compileLambdaZip,
-			upsertLambda,
-			publishLambdaVersion,
-			findLambdaAlias,
-			createLambdaAlias,
-			updateLambdaAlias
+			findLambdaByName
+			// findRoleByName,
+			// createRole,
+			// attachRolePolicy,
+			// buildPackage,
+			// compileLambdaZip,
+			// upsertLambda,
+			// publishLambdaVersion,
+			// findLambdaAlias,
+			// createLambdaAlias,
+			// updateLambdaAlias
 		).apply(this);
 
 		privateData(this).conan = conan;

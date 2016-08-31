@@ -18,7 +18,7 @@ describe("ConanAwsLambdaPlugin(conan)", () => {
 	});
 
   it("should link ConanAwsLambda", () => {
-		conan.should.respondTo(lambda);
+		conan.should.respondTo("lambda");
 	});
 
 	it("should return an instance of ConanAwsLambda", () => {

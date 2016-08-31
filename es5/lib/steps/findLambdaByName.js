@@ -12,35 +12,29 @@ var _awsSdk2 = _interopRequireDefault(_awsSdk);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function findLambdaByName(conan, lambda, stepDone) {
+	// TODO: Add coverage for the AWS.Lambda config here.
+	// Currently not possible without lots of extra work.
+	// See: https://github.com/dwyl/aws-sdk-mock/issues/38
 	var awsLambda = new _awsSdk2.default.Lambda({
 		region: conan.config.region
 	});
-	var lambdaName = void 0;
-	if (typeof lambda.name === "function") {
-		lambdaName = lambda.name();
-	} else {
-		lambdaName = lambda.lambda()[0];
-	}
+
+	var lambdaName = lambda.name();
 
 	if (lambdaName) {
 		awsLambda.getFunction({
 			"FunctionName": lambdaName
 		}, function (error, responseData) {
 			if (error && error.statusCode === 404) {
-				stepDone(null, {
-					lambdaArn: null
-				});
+				stepDone();
 			} else if (error) {
 				stepDone(error);
 			} else {
-				stepDone(null, {
-					lambdaArn: responseData.Configuration.FunctionArn
-				});
+				lambda.functionArn(responseData.Configuration.FunctionArn);
+				stepDone();
 			}
 		});
 	} else {
-		stepDone(null, {
-			lambdaArn: null
-		});
+		stepDone();
 	}
 }
