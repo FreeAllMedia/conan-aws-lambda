@@ -1,6 +1,6 @@
 import Conan from "conan";
 
-import ConanAwsLambda from "../../../lib/components/conanAwsLambda.js";
+import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import findLambdaByName from "../../../lib/steps/findLambdaByName.js";
 
 describe(".findLambdaByName(conan, lambda, stepDone) (No Lambda Name)", () => {
@@ -9,11 +9,9 @@ describe(".findLambdaByName(conan, lambda, stepDone) (No Lambda Name)", () => {
 			callbackError;
 
 	beforeEach(done => {
-		conan = new Conan({
-			region: "us-east-1"
-		});
+		conan = new Conan().use(ConanAwsLambdaPlugin);
 
-		lambda = new ConanAwsLambda(conan);
+		lambda = conan.lambda();
 
 		findLambdaByName(conan, lambda, error => {
 			callbackError = error;

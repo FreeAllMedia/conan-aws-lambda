@@ -1,29 +1,23 @@
-export default function createRole(conan, context, stepDone) {
-	if (!context.results.roleArn) {
-		const AWS = context.libraries.AWS;
-		const iam = new AWS.IAM({
-			region: conan.config.region
-		});
-
-		iam.createRole({
-			"RoleName": context.parameters.role(),
+export default function createRole(conan, lambda, stepDone) {
+	if (!lambda.roleArn()) {
+		conan.iamClient().createRole({
+			"RoleName": lambda.role(),
 			"AssumeRolePolicyDocument": JSON.stringify({
-					"Version": "2012-10-17",
-					"Statement": {
-						"Effect": "Allow",
-						"Action": "sts:AssumeRole",
-						"Principal": {
-							"Service": "lambda.amazonaws.com"
-						}
+				"Version": "2012-10-17",
+				"Statement": {
+					"Effect": "Allow",
+					"Action": "sts:AssumeRole",
+					"Principal": {
+						"Service": "lambda.amazonaws.com"
 					}
-				})
+				}
+			})
 		}, (error, responseData) => {
 			if (error) {
 				stepDone(error);
 			} else {
-				stepDone(null, {
-					roleArn: responseData.Role.Arn
-				});
+				lambda.roleArn(responseData.Role.Arn);
+				stepDone();
 			}
 		});
 	} else {

@@ -57,8 +57,8 @@ export default class ConanAwsLambda extends ConanComponent {
 		conan.series(
 			validateLambda,
 			findLambdaByName
-			// findRoleByName,
-			// createRole,
+			findRoleByName,
+			createRole,
 			// attachRolePolicy,
 			// buildPackage,
 			// compileLambdaZip,

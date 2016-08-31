@@ -1,7 +1,7 @@
 import Conan from "conan";
 import AWS from "aws-sdk-mock";
 
-import ConanAwsLambda from "../../../lib/components/conanAwsLambda.js";
+import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import findLambdaByName from "../../../lib/steps/findLambdaByName.js";
 
 describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
@@ -12,13 +12,7 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 			callbackError;
 
 	beforeEach(done => {
-		conan = new Conan({
-			region: "us-east-1"
-		});
-
-		lambda = new ConanAwsLambda(conan, "NewLambda");
-
-		functionArn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
+		conan = new Conan().use(ConanAwsLambdaPlugin);
 
 		AWS.mock("Lambda", "getFunction", (parameters, callback) => {
 			awsParameters = parameters;
@@ -31,6 +25,10 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 			};
 			callback(null, responseData);
 		});
+
+		lambda = conan.lambda("NewLambda");
+
+		functionArn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
 
 		findLambdaByName(conan, lambda, error => {
 			callbackError = error;

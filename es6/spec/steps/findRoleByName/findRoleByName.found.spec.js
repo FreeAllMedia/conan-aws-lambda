@@ -1,87 +1,45 @@
 import Conan from "conan";
-import findRoleByName from "../../lib/steps/findRoleByName.js";
-import sinon from "sinon";
+import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
+import findRoleByName from "../../../lib/steps/findRoleByName.js";
+import AWS from "aws-sdk-mock";
 
-xdescribe(".findRoleByName(conan, context, stepDone) (Found)", () => {
+describe(".findRoleByName(conan, lambda, stepDone) (Found)", () => {
 	let conan,
-			context,
-			stepDone,
-
-			awsResponseError,
-			awsResponseData,
-
-			stepReturnError,
-			stepReturnData,
-
-			parameters;
-
-	const mockIam = {
-		getRole: sinon.spy((params, callback) => {
-			callback(awsResponseError, awsResponseData);
-		})
-	};
-
-	const MockAWS = {
-		IAM: sinon.spy(() => {
-			return mockIam;
-		})
-	};
+			lambda,
+			awsParameters,
+			roleArn;
 
 	beforeEach(done => {
-		conan = new Conan({
-			region: "us-east-1"
+		AWS.mock("IAM", "getRole", (parameters, callback) => {
+			awsParameters = parameters;
+			roleArn = "arn:aws:lambda:us-east-1:123895237541:role:SomeRole";
+			callback(null, {
+				Role: {
+					Arn: roleArn
+				}
+			});
 		});
 
-		parameters = new class MockConanAwsLambda {
-			role() { return "TestFunction"; }
-		}();
+		conan = new Conan().use(ConanAwsLambdaPlugin);
 
-		context = {
-			parameters: parameters,
-			libraries: { AWS: MockAWS },
-			results: {}
-		};
+		lambda = conan.lambda("HelloWorld");
 
-		// "Role Found" response by default
-		awsResponseData = {
-			Role: {
-				Arn: "arn:aws:lambda:us-east-1:123895237541:role:SomeRole"
-			}
-		};
-		awsResponseError = null;
-
-		stepDone = (afterCallback) => {
-			return (error, data) => {
-				stepReturnError = error;
-				stepReturnData = data;
-				afterCallback();
-			};
-		};
-
-		findRoleByName(conan, context, stepDone(done));
+		findRoleByName(conan, lambda, done);
 	});
+
+	afterEach(() => AWS.restore("IAM", "getRole"));
 
 	it("should be a function", () => {
 		(typeof findRoleByName).should.equal("function");
 	});
 
-	it("should set the designated region on the lambda client", () => {
-		MockAWS.IAM.calledWith({
-			region: conan.config.region
-		}).should.be.true;
-	});
-
 	it("should call AWS with the designated role name parameter", () => {
-		mockIam.getRole.calledWith({
-			RoleName: context.parameters.role()
-		}).should.be.true;
+		awsParameters.should.eql({
+			RoleName: lambda.role()
+		});
 	});
 
-	describe("(Role is Found)", () => {
-		it("should return the found role id", () => {
-			stepReturnData.should.eql({
-				roleArn: awsResponseData.Role.Arn
-			});
-		});
+	it("should set the found role Arn to lambda.roleArn()", () => {
+		lambda.roleArn().should.eql(roleArn);
 	});
 });

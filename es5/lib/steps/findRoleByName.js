@@ -5,24 +5,16 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = findRoleByName;
 function findRoleByName(conan, lambda, stepDone) {
-	var AWS = context.libraries.AWS;
-	var iam = new AWS.IAM({
-		region: conan.config.region
-	});
-
-	iam.getRole({
-		"RoleName": context.parameters.role()
+	conan.iamClient().getRole({
+		"RoleName": lambda.role()
 	}, function (error, responseData) {
 		if (error && error.statusCode === 404) {
-			stepDone(null, {
-				roleArn: null
-			});
+			stepDone();
 		} else if (error) {
 			stepDone(error);
 		} else {
-			stepDone(null, {
-				roleArn: responseData.Role.Arn
-			});
+			lambda.roleArn(responseData.Role.Arn);
+			stepDone();
 		}
 	});
 }

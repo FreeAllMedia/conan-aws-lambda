@@ -1,6 +1,6 @@
+import Conan from "conan";
 import ConanAwsLambda from "../../../lib/components/conanAwsLambda.js";
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
-import Conan from "conan";
 
 describe("conanAwsLambda.publish([newValue])", () => {
 	let lambda,
