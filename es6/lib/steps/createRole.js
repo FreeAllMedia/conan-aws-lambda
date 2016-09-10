@@ -1,6 +1,6 @@
 export default function createRole(conan, lambda, stepDone) {
 	if (!lambda.roleArn()) {
-		conan.iamClient().createRole({
+		lambda.iamClient().createRole({
 			"RoleName": lambda.role(),
 			"AssumeRolePolicyDocument": JSON.stringify({
 				"Version": "2012-10-17",

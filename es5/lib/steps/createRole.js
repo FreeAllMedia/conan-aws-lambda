@@ -4,15 +4,10 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 exports.default = createRole;
-function createRole(conan, context, stepDone) {
-	if (!context.results.roleArn) {
-		var AWS = context.libraries.AWS;
-		var iam = new AWS.IAM({
-			region: conan.config.region
-		});
-
-		iam.createRole({
-			"RoleName": context.parameters.role(),
+function createRole(conan, lambda, stepDone) {
+	if (!lambda.roleArn()) {
+		lambda.iamClient().createRole({
+			"RoleName": lambda.role(),
 			"AssumeRolePolicyDocument": JSON.stringify({
 				"Version": "2012-10-17",
 				"Statement": {
@@ -27,9 +22,8 @@ function createRole(conan, context, stepDone) {
 			if (error) {
 				stepDone(error);
 			} else {
-				stepDone(null, {
-					roleArn: responseData.Role.Arn
-				});
+				lambda.roleArn(responseData.Role.Arn);
+				stepDone();
 			}
 		});
 	} else {

@@ -4,20 +4,15 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 exports.default = attachRolePolicy;
-function attachRolePolicy(conan, context, stepDone) {
-	var AWS = context.libraries.AWS;
-	var iam = new AWS.IAM({
-		region: conan.config.region
-	});
-
-	iam.attachRolePolicy({
-		"RoleName": context.parameters.role(),
+function attachRolePolicy(conan, lambda, done) {
+	lambda.iamClient().attachRolePolicy({
+		"RoleName": lambda.role(),
 		"PolicyArn": "arn:aws:iam::aws:policy/AWSLambdaExecute"
 	}, function (error) {
 		if (error) {
-			stepDone(error);
+			done(error);
 		} else {
-			stepDone();
+			done();
 		}
 	});
 }

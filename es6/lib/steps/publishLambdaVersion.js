@@ -1,19 +1,13 @@
-export default function publishLambdaVersion(conan, context, stepDone) {
-	const AWS = context.libraries.AWS;
-	const iam = new AWS.Lambda({
-		region: conan.config.region
-	});
-
-	iam.publishVersion({
-		"FunctionName": context.parameters.name(),
+export default function publishLambdaVersion(conan, lambda, stepDone) {
+	lambda.iamClient().publishVersion({
+		"FunctionName": lambda.name(),
 		"Description": "conan autopublish step"
 	}, (error, responseData) => {
 		if (error) {
 			stepDone(error);
 		} else {
-			stepDone(null, {
-				lambdaVersion: responseData.Version
-			});
+			lambda.version(responseData.Version);
+			stepDone(null);
 		}
 	});
 }

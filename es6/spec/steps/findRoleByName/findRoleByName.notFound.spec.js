@@ -21,7 +21,7 @@ describe(".findRoleByName(conan, lambda, stepDone) (Not Found)", () => {
 		findRoleByName(conan, lambda, done);
 	});
 
-	afterEach(() => AWS.restore("IAM", "getRole"));
+	afterEach(() => AWS.restore("IAM"));
 
 	it("should return the roleArn as null", () => {
 		(lambda.roleArn() === null).should.be.true;

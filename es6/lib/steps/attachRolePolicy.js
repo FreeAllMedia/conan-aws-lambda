@@ -1,17 +1,12 @@
-export default function attachRolePolicy(conan, context, stepDone) {
-	const AWS = context.libraries.AWS;
-	const iam = new AWS.IAM({
-		region: conan.config.region
-	});
-
-	iam.attachRolePolicy({
-		"RoleName": context.parameters.role(),
+export default function attachRolePolicy(conan, lambda, done) {
+	lambda.iamClient().attachRolePolicy({
+		"RoleName": lambda.role(),
 		"PolicyArn": "arn:aws:iam::aws:policy/AWSLambdaExecute"
 	}, (error) => {
 		if (error) {
-			stepDone(error);
+			done(error);
 		} else {
-			stepDone();
+			done();
 		}
 	});
 }

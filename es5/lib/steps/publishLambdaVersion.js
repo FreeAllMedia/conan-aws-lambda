@@ -4,22 +4,16 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 exports.default = publishLambdaVersion;
-function publishLambdaVersion(conan, context, stepDone) {
-	var AWS = context.libraries.AWS;
-	var iam = new AWS.Lambda({
-		region: conan.config.region
-	});
-
-	iam.publishVersion({
-		"FunctionName": context.parameters.name(),
+function publishLambdaVersion(conan, lambda, stepDone) {
+	lambda.iamClient().publishVersion({
+		"FunctionName": lambda.name(),
 		"Description": "conan autopublish step"
 	}, function (error, responseData) {
 		if (error) {
 			stepDone(error);
 		} else {
-			stepDone(null, {
-				lambdaVersion: responseData.Version
-			});
+			lambda.version(responseData.Version);
+			stepDone(null);
 		}
 	});
 }

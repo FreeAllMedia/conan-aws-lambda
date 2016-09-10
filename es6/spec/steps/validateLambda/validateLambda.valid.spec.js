@@ -1,4 +1,8 @@
+import Conan from "conan";
+import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
+
 import validateLambda from "../../../lib/steps/validateLambda.js";
+
 
 describe(".validateLambda(conan, lambda, stepDone) (When lambda is valid)", () => {
 	let conan,
@@ -6,12 +10,13 @@ describe(".validateLambda(conan, lambda, stepDone) (When lambda is valid)", () =
 			returnedError;
 
 	beforeEach(done => {
-		conan = { config: {} };
-		lambda = {
-			role: () => { return "MyIamRoleName"; },
-			packages: () => { return { async: "1.0.0"	}; }
-		};
-		conan.config.bucket = "our-bucket";
+		conan = new Conan().use(ConanAwsLambdaPlugin);
+
+		lambda = conan.lambda("MyLambda")
+			.role("MyIamRoleName")
+			.packages({ async: "1.0.0" })
+			.bucket("our-bucket");
+
 		validateLambda(conan, lambda, error => {
 			returnedError = error;
 			done();

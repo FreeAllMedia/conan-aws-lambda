@@ -1,3 +1,6 @@
+import Conan from "conan";
+import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
+
 import validateLambda from "../../../lib/steps/validateLambda.js";
 
 describe(".validateLambda(conan, lambda, stepDone) (When lambda is missing a role)", () => {
@@ -6,11 +9,10 @@ describe(".validateLambda(conan, lambda, stepDone) (When lambda is missing a rol
 			returnedError;
 
 	beforeEach(done => {
-		conan = { config: {} };
-		lambda = {
-			role: () => {},
-			packages: () => { return { async: "1.0.0"	}; }
-		};
+		conan = new Conan().use(ConanAwsLambdaPlugin);
+
+		lambda = conan.lambda("SomeLambda");
+
 		validateLambda(conan, lambda, error => {
 			returnedError = error;
 			done();

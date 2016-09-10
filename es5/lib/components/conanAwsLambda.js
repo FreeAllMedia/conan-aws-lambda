@@ -24,9 +24,9 @@ var _attachRolePolicy = require("../steps/attachRolePolicy.js");
 
 var _attachRolePolicy2 = _interopRequireDefault(_attachRolePolicy);
 
-var _buildPackage = require("../steps/buildPackage.js");
+var _buildPackages = require("../steps/buildPackages.js");
 
-var _buildPackage2 = _interopRequireDefault(_buildPackage);
+var _buildPackages2 = _interopRequireDefault(_buildPackages);
 
 var _compileLambdaZip = require("../steps/compileLambdaZip.js");
 
@@ -84,11 +84,13 @@ var ConanAwsLambda = function (_ConanComponent) {
 	_createClass(ConanAwsLambda, [{
 		key: "initialize",
 		value: function initialize(conan, name) {
-			this.properties("name", "filePath", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages", "roleArn", "functionArn", "region");
+			this.properties("name", "filePath", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages", "packagesDirectory", "roleArn", "functionArn", "iamClient", "lambdaClient", "version", "bucket");
 
 			this.properties("handler").multi;
 
 			this.properties("dependencies", "alias").multi.aggregate;
+
+			this.properties("region", "profile").then(this.updateClients);
 
 			/**
     * DEFAULT VALUES
@@ -100,12 +102,13 @@ var ConanAwsLambda = function (_ConanComponent) {
 			this.timeout(3);
 			this.region(conan.region());
 			this.publish(true);
+			this.iamClient(conan.iamClient());
+			this.lambdaClient(conan.lambdaClient());
+			this.profile(conan.profile());
+			this.role(conan.role());
+			this.bucket(conan.bucket());
 
-			conan.series(_validateLambda2.default, _findLambdaByName2.default
-			// findRoleByName,
-			// createRole,
-			// attachRolePolicy,
-			// buildPackage,
+			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackages2.default
 			// compileLambdaZip,
 			// upsertLambda,
 			// publishLambdaVersion,
@@ -149,6 +152,18 @@ var ConanAwsLambda = function (_ConanComponent) {
 					}
 				});
 			}
+		}
+	}, {
+		key: "updateClients",
+		value: function updateClients() {
+			// TODO: Add coverage for the AWS.Lambda config here.
+			// Currently not possible without lots of extra work.
+			// See: https://github.com/dwyl/aws-sdk-mock/issues/38
+
+			var awsConfig = { region: this.region(), profile: this.profile() };
+
+			this.lambdaClient(new _awsSdk2.default.Lambda(awsConfig));
+			this.iamClient(new _awsSdk2.default.IAM(awsConfig));
 		}
 	}]);
 

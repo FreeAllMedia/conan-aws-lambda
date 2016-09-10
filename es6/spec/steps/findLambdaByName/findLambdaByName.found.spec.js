@@ -36,7 +36,7 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 		});
 	});
 
-	afterEach(() => AWS.restore("Lambda", "getFunction"));
+	afterEach(() => AWS.restore("Lambda"));
 
 	it("should not callback with an error", () => {
 		(callbackError === undefined).should.be.true;

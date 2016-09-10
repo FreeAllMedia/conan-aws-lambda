@@ -1,25 +1,26 @@
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import Conan from "conan";
 
-describe("conanAwsLambda.role([newRole])", () => {
+describe("conanAwsLambda.handler([newArn])", () => {
 	let lambda,
 			conan;
 
 	beforeEach(() => {
 		conan = new Conan().use(ConanAwsLambdaPlugin);
 		conan.use(ConanAwsLambdaPlugin);
-		conan.role("Ben");
+
+		conan.handler("us-east-2");
 
 		lambda = conan.lambda("SomeLambda");
 	});
 
-	it("should copy conan's .role()", () => {
-		lambda.role().should.eql(conan.role());
+	it("should copy conan's .handler()", () => {
+		lambda.handler().should.eql(conan.handler());
 	});
 
 	it("should be settable", () => {
-		const role = "Jerry";
-		lambda.role(role);
-		lambda.role().should.eql(role);
+		const handler = "invoke";
+		lambda.handler(handler);
+		lambda.handler().should.eql(handler);
 	});
 });

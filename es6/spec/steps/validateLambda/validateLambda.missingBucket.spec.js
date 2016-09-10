@@ -1,4 +1,6 @@
 import validateLambda from "../../../lib/steps/validateLambda.js";
+import Conan from "conan";
+import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 
 describe(".validateLambda(conan, lambda, stepDone) (When lambda has packages set, but conan missing a bucket)", () => {
 	let conan,
@@ -6,11 +8,14 @@ describe(".validateLambda(conan, lambda, stepDone) (When lambda has packages set
 			returnedError;
 
 	beforeEach(done => {
-		conan = { config: {} };
-		lambda = {
-			role: () => { return "MyIamRoleName"; },
-			packages: () => { return { async: "1.0.0"	}; }
-		};
+		conan = new Conan().use(ConanAwsLambdaPlugin);
+
+		lambda = conan
+			.lambda("SomeLambda")
+			.role("MyIamRoleName")
+			.packages({
+				async: "1.0.0"
+			});
 
 		validateLambda(conan, lambda, error => {
 			returnedError = error;

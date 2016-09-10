@@ -4,7 +4,7 @@ import findLambdaByName from "../steps/findLambdaByName.js";
 import findRoleByName from "../steps/findRoleByName.js";
 import createRole from "../steps/createRole.js";
 import attachRolePolicy from "../steps/attachRolePolicy.js";
-import buildPackage from "../steps/buildPackage.js";
+import buildPackages from "../steps/buildPackages.js";
 import compileLambdaZip from "../steps/compileLambdaZip.js";
 import upsertLambda from "../steps/upsertLambda.js";
 import publishLambdaVersion from "../steps/publishLambdaVersion.js";
@@ -29,9 +29,13 @@ export default class ConanAwsLambda extends ConanComponent {
 			"publish",
 			"bucket",
 			"packages",
+			"packagesDirectory",
 			"roleArn",
 			"functionArn",
-			"region"
+			"iamClient",
+			"lambdaClient",
+			"version",
+			"bucket"
 		);
 
 		this.properties(
@@ -43,6 +47,11 @@ export default class ConanAwsLambda extends ConanComponent {
 			"alias"
 		).multi.aggregate;
 
+		this.properties(
+			"region",
+			"profile"
+		).then(this.updateClients);
+
 		/**
 		 * DEFAULT VALUES
 		 */
@@ -53,14 +62,19 @@ export default class ConanAwsLambda extends ConanComponent {
 		this.timeout(3);
 		this.region(conan.region());
 		this.publish(true);
+		this.iamClient(conan.iamClient());
+		this.lambdaClient(conan.lambdaClient());
+		this.profile(conan.profile());
+		this.role(conan.role());
+		this.bucket(conan.bucket());
 
 		conan.series(
 			validateLambda,
-			findLambdaByName
+			findLambdaByName,
 			findRoleByName,
 			createRole,
-			// attachRolePolicy,
-			// buildPackage,
+			attachRolePolicy,
+			buildPackages
 			// compileLambdaZip,
 			// upsertLambda,
 			// publishLambdaVersion,
@@ -103,5 +117,16 @@ export default class ConanAwsLambda extends ConanComponent {
 				}
 			});
 		}
+	}
+
+	updateClients() {
+		// TODO: Add coverage for the AWS.Lambda config here.
+		// Currently not possible without lots of extra work.
+		// See: https://github.com/dwyl/aws-sdk-mock/issues/38
+
+		const awsConfig = { region: this.region(), profile: this.profile() };
+
+		this.lambdaClient(new AWS.Lambda(awsConfig));
+		this.iamClient(new AWS.IAM(awsConfig));
 	}
 }
