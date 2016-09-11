@@ -10,7 +10,6 @@ describe("conan.iamClient([newLambdaClient])", () => {
 	});
 
 	it("should be set to an instance of AWS.IAM by default", () => {
-		console.log({ iam: AWS.IAM });
 		conan.iamClient().should.be.instanceOf(AWS.IAM);
 	});
 

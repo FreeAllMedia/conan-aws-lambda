@@ -12,8 +12,6 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 			callbackError;
 
 	beforeEach(done => {
-		conan = new Conan().use(ConanAwsLambdaPlugin);
-
 		AWS.mock("Lambda", "getFunction", (parameters, callback) => {
 			awsParameters = parameters;
 
@@ -25,6 +23,8 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 			};
 			callback(null, responseData);
 		});
+
+		conan = new Conan().use(ConanAwsLambdaPlugin);
 
 		lambda = conan.lambda("NewLambda");
 

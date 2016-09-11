@@ -7,7 +7,7 @@ import sinon from "sinon";
 import path from "path";
 import glob from "glob";
 
-describe(".compileLambdaZip(conan, context, stepDone)", () => {
+xdescribe(".compileLambdaZip(conan, context, stepDone)", () => {
 	let conan,
 			context,
 			stepDone,

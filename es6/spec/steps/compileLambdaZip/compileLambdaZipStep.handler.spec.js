@@ -7,7 +7,7 @@ import sinon from "sinon";
 
 temp.track();
 
-describe(".compileLambdaZip(conan, context, stepDone)", () => {
+xdescribe(".compileLambdaZip(conan, context, stepDone)", () => {
 	let conan,
 			context,
 			stepDone,

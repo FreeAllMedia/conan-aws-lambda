@@ -1,5 +1,5 @@
 import Conan from "conan";
-import ConanAwsLambda from "../../lib/components/conanAwsLambda.js";
+import ConanAwsLambda from "../../lib/conanAwsLambda.js";
 import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 
 import privateData from "incognito";

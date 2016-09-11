@@ -11,7 +11,8 @@ describe(".validateLambda(conan, lambda, stepDone) (When lambda is missing a rol
 	beforeEach(done => {
 		conan = new Conan().use(ConanAwsLambdaPlugin);
 
-		lambda = conan.lambda("SomeLambda");
+		lambda = conan.lambda("SomeLambda")
+			.file("someFile.js");
 
 		validateLambda(conan, lambda, error => {
 			returnedError = error;

@@ -1,4 +1,4 @@
-import ConanAwsLambda from "./components/conanAwsLambda.js";
+import ConanAwsLambda from "./conanAwsLambda.js";
 import AWS from "aws-sdk";
 import privateData from "incognito";
 
@@ -14,7 +14,8 @@ export default class ConanAwsLambdaPlugin {
 			"iamClient",
 			"basePath",
 			"role",
-			"bucket"
+			"bucket",
+			"handler"
 		);
 
 		conan.properties(
@@ -24,6 +25,7 @@ export default class ConanAwsLambdaPlugin {
 
 		conan
 			.region("us-east-1")
+			.handler("handler")
 			.basePath(process.cwd());
 	}
 
