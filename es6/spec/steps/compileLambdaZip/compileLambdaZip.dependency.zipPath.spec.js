@@ -7,13 +7,14 @@ import path from "path";
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import compileLambdaZip from "../../../lib/steps/compileLambdaZip.js";
 
-describe(".compileLambdaZip(conan, lambda, stepDone) (With Packages Set)", () => {
+describe(".compileLambdaZip(conan, lambda, stepDone) (With Dependency Set With Zip Path)", () => {
 	let conan,
 			lambda,
 			callbackError;
 
 	beforeEach(function (done) {
 		this.timeout(30000);
+
 		conan = new Conan().use(ConanAwsLambdaPlugin)
 			.basePath(`${__dirname}/../../fixtures/`);
 
@@ -21,7 +22,7 @@ describe(".compileLambdaZip(conan, lambda, stepDone) (With Packages Set)", () =>
 
 		const fixturesDirectoryPath = path.normalize(`${__dirname}/../fixtures`);
 
-		lambda.dependency(`${fixturesDirectoryPath}/d*y.js`).zipBase("lib");
+		lambda.dependency(`${fixturesDirectoryPath}/d*y.js`).zipPath("lib");
 
 		compileLambdaZip(conan, lambda, error => {
 			callbackError = error;

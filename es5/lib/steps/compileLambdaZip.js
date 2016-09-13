@@ -13,13 +13,13 @@ var _temp = require("temp");
 
 var _temp2 = _interopRequireDefault(_temp);
 
-var _path = require("path");
-
-var _path2 = _interopRequireDefault(_path);
-
 var _gracefulFs = require("graceful-fs");
 
 var _gracefulFs2 = _interopRequireDefault(_gracefulFs);
+
+var _path = require("path");
+
+var _path2 = _interopRequireDefault(_path);
 
 var _async = require("async");
 
@@ -29,9 +29,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // import hacher from "hacher";
 
+// graceful-fs required to avoid file table overflow
 function compileLambdaZip(conan, lambda, done) {
-	_async2.default.waterfall([createZip, _async2.default.apply(addHandler, conan, lambda), _async2.default.apply(addPackages, lambda), makeTemporaryDirectory, writeZip, _async2.default.apply(setZipPath, lambda)], done);
-} // graceful-fs required to avoid file table overflow
+	_async2.default.waterfall([createZip, _async2.default.apply(addHandler, conan, lambda), _async2.default.apply(addPackages, lambda), _async2.default.apply(addDependencies, lambda), makeTemporaryDirectory, writeZip, _async2.default.apply(setZipPath, lambda)], done);
+}
 // import inflect from "jargon";
 // import glob from "glob";
 
@@ -43,8 +44,9 @@ function createZip(done) {
 
 function addHandler(conan, lambda, zip, done) {
 	var filePath = lambda.file();
-	var basePath = conan.basePath();
-	var readStream = _gracefulFs2.default.createReadStream(basePath + filePath);
+	var basePath = lambda.basePath();
+	var handlerFilePath = _path2.default.join(basePath, filePath);
+	var readStream = _gracefulFs2.default.createReadStream(handlerFilePath);
 
 	zip.append(readStream, { name: filePath });
 
@@ -57,6 +59,14 @@ function addPackages(lambda, zip, done) {
 	if (packagesDirectory) {
 		zip.directory(packagesDirectory, "node_modules");
 	}
+
+	done(null, zip);
+}
+
+function addDependencies(lambda, zip, done) {
+	var dependencies = lambda.dependencies;
+
+	dependencies.forEach(function (dependency) {});
 
 	done(null, zip);
 }

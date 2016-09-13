@@ -16,8 +16,8 @@ new Conan().use(ConanAwsLambda)
 	.packages({
 		something: "^2.0.1"
 	})
-	.dependencies("./lib/**/*").zipBase("blah")
-	.dependencies("./stuff/**/*").zipBase("blah")
+	.dependency("./lib/**/*").zipPath("blah")
+	.dependency("./stuff/**/*").zipPath("blah")
 
 .lambda("HelloPanda")
 	.file("./functions/helloPanda.js")

@@ -18,6 +18,10 @@ var _incognito = require("incognito");
 
 var _incognito2 = _interopRequireDefault(_incognito);
 
+var _dependency = require("./dependency.js");
+
+var _dependency2 = _interopRequireDefault(_dependency);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -29,11 +33,13 @@ var ConanAwsLambdaPlugin = function () {
 		var _ = (0, _incognito2.default)(this);
 		_.conan = conan;
 
-		conan.component("lambda", _conanAwsLambda2.default);
-
 		conan.properties("lambdaClient", "iamClient", "basePath", "role", "bucket", "handler");
 
 		conan.properties("region", "profile").then(this.updateClients.bind(conan));
+
+		conan.component("dependency", _dependency2.default).into("dependencies");
+
+		conan.component("lambda", _conanAwsLambda2.default).inherit("dependency", "dependencies");
 
 		conan.region("us-east-1").handler("handler").basePath(process.cwd());
 	}

@@ -26,7 +26,7 @@ var Dependency = function (_ConanComponent) {
 	_createClass(Dependency, [{
 		key: "initialize",
 		value: function initialize(lambda, path) {
-			this.properties("path", "zipBase", "basePath");
+			this.properties("path", "zipPath", "basePath");
 
 			this.path(path);
 			this.basePath(lambda.basePath());

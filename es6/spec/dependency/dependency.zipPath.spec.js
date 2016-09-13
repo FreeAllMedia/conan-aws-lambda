@@ -1,7 +1,7 @@
 import Conan from "conan";
 import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 
-describe("dependency.zipBase([newZipBase])", () => {
+describe("dependency.zipPath([newZipPath])", () => {
 	let conan,
 			lambda,
 			dependency;
@@ -13,12 +13,12 @@ describe("dependency.zipBase([newZipBase])", () => {
 	});
 
 	it("should be set to null by default", () => {
-		(dependency.zipBase() === null).should.be.true;
+		(dependency.zipPath() === null).should.be.true;
 	});
 
 	it("should have a setter and a getter", () => {
-		const zipBase = "/some/path";
-		dependency.zipBase(zipBase);
-		dependency.zipBase().should.eql(zipBase);
+		const zipPath = "/some/path";
+		dependency.zipPath(zipPath);
+		dependency.zipPath().should.eql(zipPath);
 	});
 });

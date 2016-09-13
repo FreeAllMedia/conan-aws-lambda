@@ -1,9 +1,9 @@
 import archiver from "archiver";
 import temp from "temp";
-import path from "path";
 import fileSystem from "graceful-fs"; // graceful-fs required to avoid file table overflow
+import path from "path";
 // import inflect from "jargon";
-// import glob from "glob";
+import glob from "glob";
 import Async from "async";
 // import hacher from "hacher";
 
@@ -12,6 +12,7 @@ export default function compileLambdaZip(conan, lambda, done) {
 		createZip,
 		Async.apply(addHandler, conan, lambda),
 		Async.apply(addPackages, lambda),
+		Async.apply(addDependencies, lambda),
 		makeTemporaryDirectory,
 		writeZip,
 		Async.apply(setZipPath, lambda)
@@ -25,10 +26,10 @@ function createZip(done) {
 
 function addHandler(conan, lambda, zip, done) {
 	const filePath = lambda.file();
-	const basePath = conan.basePath();
-	const readStream = fileSystem.createReadStream(basePath + filePath);
+	const basePath = lambda.basePath();
+	const handlerFilePath = path.join(basePath, filePath);
 
-	zip.append(readStream, { name: filePath });
+	appendToZip(handlerFilePath, zip);
 
 	done(null, zip);
 }
@@ -39,6 +40,20 @@ function addPackages(lambda, zip, done) {
 	if (packagesDirectory) {
 		zip.directory(packagesDirectory, "node_modules");
 	}
+
+	done(null, zip);
+}
+
+function addDependencies(lambda, zip, done) {
+	const dependencies = lambda.dependencies;
+
+	Async.mapSeries(dependencies, (dependency, next) => {
+
+
+		appendToZip(filePath, zip);
+
+		next(null);
+	}, done);
 
 	done(null, zip);
 }
@@ -63,4 +78,10 @@ function writeZip(zip, temporaryDirectoryPath, done) {
 function setZipPath(lambda, zipPath, done) {
 	lambda.zipPath(zipPath);
 	done(null);
+}
+
+function appendToZip(pathToAppend, zip) {
+	const readStream = fileSystem.createReadStream(pathToAppend);
+
+	zip.append(readStream, { name: filePath });
 }

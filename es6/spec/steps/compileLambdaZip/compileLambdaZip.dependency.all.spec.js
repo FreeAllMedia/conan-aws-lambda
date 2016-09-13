@@ -6,7 +6,7 @@ import unzip from "unzip2";
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import compileLambdaZip from "../../../lib/steps/compileLambdaZip.js";
 
-xdescribe(".compileLambdaZip(conan, lambda, stepDone) (With Packages Set)", () => {
+xdescribe(".compileLambdaZip(conan, lambda, stepDone) (With Dependencies Set)", () => {
 	let conan,
 			lambda,
 			callbackError;

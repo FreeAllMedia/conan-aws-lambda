@@ -7,7 +7,7 @@ import path from "path";
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import compileLambdaZip from "../../../lib/steps/compileLambdaZip.js";
 
-describe(".compileLambdaZip(conan, lambda, stepDone) (With Packages Set)", () => {
+describe(".compileLambdaZip(conan, lambda, stepDone) (With Dependency Set)", () => {
 	let conan,
 			lambda,
 			callbackError;

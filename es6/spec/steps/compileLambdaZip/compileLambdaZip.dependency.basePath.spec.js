@@ -7,22 +7,22 @@ import path from "path";
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import compileLambdaZip from "../../../lib/steps/compileLambdaZip.js";
 
-describe(".compileLambdaZip(conan, lambda, stepDone) (With Packages Set)", () => {
+describe(".compileLambdaZip(conan, lambda, stepDone) (With Dependency Set With Base Path)", () => {
 	let conan,
-			lambda;
+			lambda,
+			fixturesDirectory;
 
 	beforeEach(function (done) {
 		this.timeout(30000);
 
-		conan = new Conan().use(ConanAwsLambdaPlugin);
+		fixturesDirectory = path.normalize(`${__dirname}/../../fixtures/`);
+
+		conan = new Conan().use(ConanAwsLambdaPlugin)
+			.basePath(fixturesDirectory);
 
 		lambda = conan.lambda("NewLambda").file("handler.js");
 
-		const fixturesDirectory = path.normalize(`${__dirname}/../fixtures/`);
-
-		lambda
-			.dependency("d*y.js")
-				.basePath(fixturesDirectory);
+		lambda.dependency("something.js").basePath(`${fixturesDirectory}lib/`);
 
 		compileLambdaZip(conan, lambda, done);
 	});
@@ -30,8 +30,7 @@ describe(".compileLambdaZip(conan, lambda, stepDone) (With Packages Set)", () =>
 	it("should include dependency files in the zip", done => {
 		const expectedFileNames = [
 			"handler.js",
-			"dependency.js",
-			"diy.js"
+			"something.js"
 		];
 
 		let actualFilePaths = [];
@@ -48,5 +47,27 @@ describe(".compileLambdaZip(conan, lambda, stepDone) (With Packages Set)", () =>
 
 	it("should set the zip path to .zipPath()", () => {
 		(lambda.zipPath() === null).should.be.false;
+	});
+
+	it("should remove the base path from the file path", done => {
+		lambda
+			.dependency(`${fixturesDirectory}lib/something.js`)
+				.basePath(`${fixturesDirectory}lib/`);
+
+		const expectedFileNames = [
+			"handler.js",
+			"something.js"
+		];
+
+		let actualFilePaths = [];
+
+		fileSystem.createReadStream(lambda.zipPath())
+			/* eslint-disable new-cap */
+			.pipe(unzip.Parse())
+			.on("entry", entry => actualFilePaths.push(entry.path))
+			.on("close", () => {
+				actualFilePaths.should.eql(expectedFileNames);
+				done();
+			});
 	});
 });

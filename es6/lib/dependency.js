@@ -4,7 +4,7 @@ export default class Dependency extends ConanComponent {
 	initialize(lambda, path) {
 		this.properties(
 			"path",
-			"zipBase",
+			"zipPath",
 			"basePath"
 		);
 

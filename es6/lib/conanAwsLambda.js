@@ -43,7 +43,6 @@ export default class ConanAwsLambda extends ConanComponent {
 		);
 
 		this.properties(
-			"dependencies",
 			"alias"
 		).multi.aggregate;
 
@@ -51,11 +50,6 @@ export default class ConanAwsLambda extends ConanComponent {
 			"region",
 			"profile"
 		).then(this.updateClients);
-
-		/**
-		 * Components
-		 */
-		this.component("dependency", Dependency);
 
 		/**
 		 * DEFAULT VALUES
