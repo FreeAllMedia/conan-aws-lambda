@@ -43,10 +43,6 @@ export default class ConanAwsLambda extends ConanComponent {
 		);
 
 		this.properties(
-			"alias"
-		).multi.aggregate;
-
-		this.properties(
 			"region",
 			"profile"
 		).then(this.updateClients);
@@ -76,8 +72,8 @@ export default class ConanAwsLambda extends ConanComponent {
 			findRoleByName,
 			createRole,
 			attachRolePolicy,
-			buildPackages
-			// compileLambdaZip,
+			buildPackages,
+			compileLambdaZip
 			// upsertLambda,
 			// publishLambdaVersion,
 			// findLambdaAlias,

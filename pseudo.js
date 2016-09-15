@@ -11,6 +11,8 @@ new Conan().use(ConanAwsLambda)
 	async: "^1.0.0"
 })
 
+.alias("development")
+
 .lambda("HelloWorld")
 	.file("./functions/helloWorld.js")
 	.packages({
@@ -22,6 +24,7 @@ new Conan().use(ConanAwsLambda)
 .lambda("HelloPanda")
 	.file("./functions/helloPanda.js")
 	.handler("start")
+	.alias("production")
 
 .lambda("HelloPanda")
 	.file("./functions/helloPanda.js");

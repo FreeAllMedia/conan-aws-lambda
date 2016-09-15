@@ -33,13 +33,13 @@ var ConanAwsLambdaPlugin = function () {
 		var _ = (0, _incognito2.default)(this);
 		_.conan = conan;
 
-		conan.properties("lambdaClient", "iamClient", "basePath", "role", "bucket", "handler");
+		conan.properties("lambdaClient", "iamClient", "basePath", "role", "bucket", "handler", "alias");
 
 		conan.properties("region", "profile").then(this.updateClients.bind(conan));
 
 		conan.component("dependency", _dependency2.default).into("dependencies");
 
-		conan.component("lambda", _conanAwsLambda2.default).inherit("dependencies");
+		conan.component("lambda", _conanAwsLambda2.default).inherit("dependencies", "alias");
 
 		conan.region("us-east-1").handler("handler").basePath(process.cwd());
 	}

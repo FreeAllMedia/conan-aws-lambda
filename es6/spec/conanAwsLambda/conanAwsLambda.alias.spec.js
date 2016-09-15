@@ -1,24 +1,24 @@
 import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 import Conan from "conan";
 
-describe("conanAwsLambda.bucket([newBucket])", () => {
+describe("conanAwsLambda.alias([newAlias])", () => {
 	let lambda,
 			conan;
 
 	beforeEach(() => {
 		conan = new Conan().use(ConanAwsLambdaPlugin);
 		conan.use(ConanAwsLambdaPlugin);
-		conan.bucket("our-bucket");
+		conan.alias("development");
 		lambda = conan.lambda("SomeLambda");
 	});
 
-	it("should copy conan's .bucket()", () => {
-		lambda.bucket().should.eql(conan.bucket());
+	it("should copy conan's .alias()", () => {
+		lambda.alias().should.eql(conan.alias());
 	});
 
 	it("should be settable", () => {
-		const bucket = "some-bucket";
-		lambda.bucket(bucket);
-		lambda.bucket().should.eql(bucket);
+		const alias = "production";
+		lambda.alias(alias);
+		lambda.alias().should.eql(alias);
 	});
 });

@@ -14,7 +14,8 @@ export default class ConanAwsLambdaPlugin {
 			"basePath",
 			"role",
 			"bucket",
-			"handler"
+			"handler",
+			"alias"
 		);
 
 		conan.properties(
@@ -24,7 +25,7 @@ export default class ConanAwsLambdaPlugin {
 
 		conan.component("dependency", Dependency).into("dependencies");
 
-		conan.component("lambda", ConanAwsLambda).inherit("dependencies");
+		conan.component("lambda", ConanAwsLambda).inherit("dependencies", "alias");
 
 		conan
 			.region("us-east-1")

@@ -1,7 +1,7 @@
 import Conan from "conan";
 import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 
-describe("conan.bucket([newBucket])", () => {
+describe("conan.alias([newAlias])", () => {
 	let conan;
 
 	beforeEach(() => {
@@ -9,12 +9,12 @@ describe("conan.bucket([newBucket])", () => {
 	});
 
 	it("should be set to null by default", () => {
-		(conan.bucket() === null).should.be.true;
+		(conan.alias() === null).should.be.true;
 	});
 
 	it("should be a getter and a setter", () => {
-		const bucket = "some-bucket";
-		conan.bucket(bucket);
-		conan.bucket().should.eql(bucket);
+		const alias = "production";
+		conan.alias(alias);
+		conan.alias().should.eql(alias);
 	});
 });

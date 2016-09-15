@@ -90,8 +90,6 @@ var ConanAwsLambda = function (_ConanComponent) {
 		value: function initialize(conan, name) {
 			this.properties("name", "file", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages", "packagesDirectory", "roleArn", "functionArn", "iamClient", "lambdaClient", "version", "bucket", "handler", "zipPath");
 
-			this.properties("alias").multi.aggregate;
-
 			this.properties("region", "profile").then(this.updateClients);
 
 			/**
