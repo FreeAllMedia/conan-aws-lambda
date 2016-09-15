@@ -39,7 +39,7 @@ var ConanAwsLambdaPlugin = function () {
 
 		conan.component("dependency", _dependency2.default).into("dependencies");
 
-		conan.component("lambda", _conanAwsLambda2.default).inherit("dependency", "dependencies");
+		conan.component("lambda", _conanAwsLambda2.default).inherit("dependencies");
 
 		conan.region("us-east-1").handler("handler").basePath(process.cwd());
 	}

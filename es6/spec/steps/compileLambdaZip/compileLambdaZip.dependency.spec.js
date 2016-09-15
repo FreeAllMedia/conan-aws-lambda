@@ -2,7 +2,6 @@ import Conan from "conan";
 
 import fileSystem from "graceful-fs";  // graceful-fs required to avoid file table overflow
 import unzip from "unzip2";
-import path from "path";
 
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import compileLambdaZip from "../../../lib/steps/compileLambdaZip.js";
@@ -14,14 +13,13 @@ describe(".compileLambdaZip(conan, lambda, stepDone) (With Dependency Set)", () 
 
 	beforeEach(function (done) {
 		this.timeout(30000);
+
 		conan = new Conan().use(ConanAwsLambdaPlugin)
 			.basePath(`${__dirname}/../../fixtures/`);
 
 		lambda = conan.lambda("NewLambda").file("handler.js");
 
-		const fixturesDirectoryPath = path.normalize(`${__dirname}/../fixtures`);
-
-		lambda.dependency(`${fixturesDirectoryPath}/d*y.js`);
+		lambda.dependency("d*y.js");
 
 		compileLambdaZip(conan, lambda, error => {
 			callbackError = error;
@@ -45,16 +43,9 @@ describe(".compileLambdaZip(conan, lambda, stepDone) (With Dependency Set)", () 
 		fileSystem.createReadStream(lambda.zipPath())
 			/* eslint-disable new-cap */
 			.pipe(unzip.Parse())
-			.on("entry", (entry) => {
-				const matches = entry.path.match(/(node_modules\/.*)\//);
-				if (matches) {
-					actualFilePaths.push(matches[1]);
-				} else {
-					actualFilePaths.push(entry.path);
-				}
-			})
+			.on("entry", entry => actualFilePaths.push(entry.path))
 			.on("close", () => {
-				actualFilePaths.should.eql(expectedFileNames);
+				actualFilePaths.sort().should.eql(expectedFileNames.sort());
 				done();
 			});
 	});

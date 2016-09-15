@@ -40,34 +40,12 @@ describe(".compileLambdaZip(conan, lambda, stepDone) (With Dependency Set With B
 			.pipe(unzip.Parse())
 			.on("entry", entry => actualFilePaths.push(entry.path))
 			.on("close", () => {
-				actualFilePaths.should.eql(expectedFileNames);
+				actualFilePaths.sort().should.eql(expectedFileNames.sort());
 				done();
 			});
 	});
 
 	it("should set the zip path to .zipPath()", () => {
 		(lambda.zipPath() === null).should.be.false;
-	});
-
-	it("should remove the base path from the file path", done => {
-		lambda
-			.dependency(`${fixturesDirectory}lib/something.js`)
-				.basePath(`${fixturesDirectory}lib/`);
-
-		const expectedFileNames = [
-			"handler.js",
-			"something.js"
-		];
-
-		let actualFilePaths = [];
-
-		fileSystem.createReadStream(lambda.zipPath())
-			/* eslint-disable new-cap */
-			.pipe(unzip.Parse())
-			.on("entry", entry => actualFilePaths.push(entry.path))
-			.on("close", () => {
-				actualFilePaths.should.eql(expectedFileNames);
-				done();
-			});
 	});
 });

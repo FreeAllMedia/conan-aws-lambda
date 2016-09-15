@@ -2,6 +2,7 @@ import Conan from "conan";
 
 import fileSystem from "graceful-fs";  // graceful-fs required to avoid file table overflow
 import unzip from "unzip2";
+import glob from "glob";
 
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
 import compileLambdaZip from "../../../lib/steps/compileLambdaZip.js";
@@ -31,28 +32,18 @@ describe(".compileLambdaZip(conan, lambda, stepDone) (With Packages Set)", () =>
 	});
 
 	it("should include package files in the zip", done => {
-		const expectedFileNames = [
-			"handler.js",
-			"node_modules/.bin",
-			"node_modules/is-sorted",
-			"node_modules/semver"
-		];
+		const fixtureFileNames = glob.sync("node_modules/**/*", { cwd: conan.basePath(), dot: true, mark: true });
+
+		const expectedFileNames = ["handler.js"].concat(fixtureFileNames);
 
 		let actualFilePaths = [];
 
 		fileSystem.createReadStream(lambda.zipPath())
 			/* eslint-disable new-cap */
 			.pipe(unzip.Parse())
-			.on("entry", (entry) => {
-				const matches = entry.path.match(/(node_modules\/.*)\//);
-				if (matches) {
-					actualFilePaths.push(matches[1]);
-				} else {
-					actualFilePaths.push(entry.path);
-				}
-			})
+			.on("entry", (entry) => actualFilePaths.push(entry.path))
 			.on("close", () => {
-				actualFilePaths.should.eql(expectedFileNames);
+				actualFilePaths.sort().should.eql(expectedFileNames.sort());
 				done();
 			});
 	});

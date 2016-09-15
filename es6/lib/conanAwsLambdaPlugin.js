@@ -24,7 +24,7 @@ export default class ConanAwsLambdaPlugin {
 
 		conan.component("dependency", Dependency).into("dependencies");
 
-		conan.component("lambda", ConanAwsLambda).inherit("dependency", "dependencies");
+		conan.component("lambda", ConanAwsLambda).inherit("dependencies");
 
 		conan
 			.region("us-east-1")

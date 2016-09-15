@@ -21,6 +21,10 @@ var _path = require("path");
 
 var _path2 = _interopRequireDefault(_path);
 
+var _glob = require("glob");
+
+var _glob2 = _interopRequireDefault(_glob);
+
 var _async = require("async");
 
 var _async2 = _interopRequireDefault(_async);
@@ -29,12 +33,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // import hacher from "hacher";
 
-// graceful-fs required to avoid file table overflow
+// import inflect from "jargon";
 function compileLambdaZip(conan, lambda, done) {
 	_async2.default.waterfall([createZip, _async2.default.apply(addHandler, conan, lambda), _async2.default.apply(addPackages, lambda), _async2.default.apply(addDependencies, lambda), makeTemporaryDirectory, writeZip, _async2.default.apply(setZipPath, lambda)], done);
-}
-// import inflect from "jargon";
-// import glob from "glob";
+} // graceful-fs required to avoid file table overflow
 
 
 function createZip(done) {
@@ -45,10 +47,8 @@ function createZip(done) {
 function addHandler(conan, lambda, zip, done) {
 	var filePath = lambda.file();
 	var basePath = lambda.basePath();
-	var handlerFilePath = _path2.default.join(basePath, filePath);
-	var readStream = _gracefulFs2.default.createReadStream(handlerFilePath);
 
-	zip.append(readStream, { name: filePath });
+	appendToZip(filePath, basePath, zip);
 
 	done(null, zip);
 }
@@ -66,9 +66,25 @@ function addPackages(lambda, zip, done) {
 function addDependencies(lambda, zip, done) {
 	var dependencies = lambda.dependencies;
 
-	dependencies.forEach(function (dependency) {});
+	_async2.default.mapSeries(dependencies, function (dependency, next) {
+		var basePath = dependency.basePath();
+		var globOptions = {};
 
-	done(null, zip);
+		if (dependency.basePath()) {
+			globOptions.cwd = dependency.basePath();
+		}
+
+		(0, _glob2.default)(dependency.path(), globOptions, function (error, filePaths) {
+			// console.log({ path: dependency.path(), globOptions, filePaths });
+
+			filePaths.forEach(function (filePath) {
+				appendToZip(filePath, basePath, zip, dependency.zipPath());
+			});
+			next(null);
+		});
+	}, function (error) {
+		done(error, zip);
+	});
 }
 
 function makeTemporaryDirectory(zip, done) {
@@ -91,4 +107,15 @@ function writeZip(zip, temporaryDirectoryPath, done) {
 function setZipPath(lambda, zipPath, done) {
 	lambda.zipPath(zipPath);
 	done(null);
+}
+
+function appendToZip(filePath, basePath, zip, zipPath) {
+	var fullPath = _path2.default.join(basePath, filePath);
+	var readStream = _gracefulFs2.default.createReadStream(fullPath);
+
+	if (zipPath) {
+		filePath = _path2.default.join(zipPath, filePath);
+	}
+
+	zip.append(readStream, { name: filePath });
 }

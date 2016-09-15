@@ -111,6 +111,8 @@ var ConanAwsLambda = function (_ConanComponent) {
 			this.bucket(conan.bucket());
 			this.handler(conan.handler());
 
+			this.component("dependency", _dependency2.default).into("dependencies");
+
 			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackages2.default
 			// compileLambdaZip,
 			// upsertLambda,

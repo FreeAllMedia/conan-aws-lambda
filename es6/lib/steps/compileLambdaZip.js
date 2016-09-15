@@ -27,9 +27,8 @@ function createZip(done) {
 function addHandler(conan, lambda, zip, done) {
 	const filePath = lambda.file();
 	const basePath = lambda.basePath();
-	const handlerFilePath = path.join(basePath, filePath);
 
-	appendToZip(handlerFilePath, zip);
+	appendToZip(filePath, basePath, zip);
 
 	done(null, zip);
 }
@@ -48,14 +47,24 @@ function addDependencies(lambda, zip, done) {
 	const dependencies = lambda.dependencies;
 
 	Async.mapSeries(dependencies, (dependency, next) => {
+		const basePath = dependency.basePath();
+		let globOptions = {};
 
+		if (dependency.basePath()) {
+			globOptions.cwd = dependency.basePath();
+		}
 
-		appendToZip(filePath, zip);
+		glob(dependency.path(), globOptions, (error, filePaths) => {
+			// console.log({ path: dependency.path(), globOptions, filePaths });
 
-		next(null);
-	}, done);
-
-	done(null, zip);
+			filePaths.forEach(filePath => {
+				appendToZip(filePath, basePath, zip, dependency.zipPath());
+			});
+			next(null);
+		});
+	}, error => {
+		done(error, zip);
+	});
 }
 
 function makeTemporaryDirectory(zip, done) {
@@ -80,8 +89,13 @@ function setZipPath(lambda, zipPath, done) {
 	done(null);
 }
 
-function appendToZip(pathToAppend, zip) {
-	const readStream = fileSystem.createReadStream(pathToAppend);
+function appendToZip(filePath, basePath, zip, zipPath) {
+	const fullPath = path.join(basePath, filePath);
+	const readStream = fileSystem.createReadStream(fullPath);
+
+	if (zipPath) {
+		filePath = path.join(zipPath, filePath);
+	}
 
 	zip.append(readStream, { name: filePath });
 }

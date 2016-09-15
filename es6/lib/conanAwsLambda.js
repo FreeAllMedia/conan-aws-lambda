@@ -68,6 +68,8 @@ export default class ConanAwsLambda extends ConanComponent {
 		this.bucket(conan.bucket());
 		this.handler(conan.handler());
 
+		this.component("dependency", Dependency).into("dependencies");
+
 		conan.series(
 			validateLambda,
 			findLambdaByName,

@@ -10,6 +10,7 @@ describe("conanAwsLambda.dependency([newDependency], [dependencyOptions])", () =
 
 	beforeEach(() => {
 		conan = new Conan().use(ConanAwsLambdaPlugin);
+
 		lambda = conan.lambda("SomeLambda");
 
 		path = "lib/*.js";

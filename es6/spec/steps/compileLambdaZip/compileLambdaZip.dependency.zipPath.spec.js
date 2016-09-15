@@ -15,14 +15,15 @@ describe(".compileLambdaZip(conan, lambda, stepDone) (With Dependency Set With Z
 	beforeEach(function (done) {
 		this.timeout(30000);
 
+		const fixturesDirectoryPath = path.normalize(`${__dirname}/../../fixtures`);
+
 		conan = new Conan().use(ConanAwsLambdaPlugin)
-			.basePath(`${__dirname}/../../fixtures/`);
+			.basePath(fixturesDirectoryPath);
 
 		lambda = conan.lambda("NewLambda").file("handler.js");
 
-		const fixturesDirectoryPath = path.normalize(`${__dirname}/../fixtures`);
-
-		lambda.dependency(`${fixturesDirectoryPath}/d*y.js`).zipPath("lib");
+		lambda.dependency("d*y.js")
+			.zipPath("lib");
 
 		compileLambdaZip(conan, lambda, error => {
 			callbackError = error;
