@@ -36,10 +36,6 @@ var _upsertLambda = require("./steps/upsertLambda.js");
 
 var _upsertLambda2 = _interopRequireDefault(_upsertLambda);
 
-var _publishLambdaVersion = require("./steps/publishLambdaVersion.js");
-
-var _publishLambdaVersion2 = _interopRequireDefault(_publishLambdaVersion);
-
 var _findLambdaAlias = require("./steps/findLambdaAlias.js");
 
 var _findLambdaAlias2 = _interopRequireDefault(_findLambdaAlias);
@@ -111,8 +107,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 
 			this.component("dependency", _dependency2.default).into("dependencies");
 
-			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackages2.default
-			// compileLambdaZip,
+			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackages2.default, _compileLambdaZip2.default
 			// upsertLambda,
 			// publishLambdaVersion,
 			// findLambdaAlias,

@@ -1,75 +1,88 @@
 import fileSystem from "fs";
-import path from "path";
+import Async from "async";
 
-export default function upsertLambda(conan, context, stepDone) {
-	const conanAwsLambda = context.parameters;
-	const AWS = context.libraries.AWS;
-	const lambda = new AWS.Lambda({region: conan.config.region});
+export default function upsertLambda(conan, lambda, done) {
+	Async.waterfall([
+		Async.apply(readZipBuffer, lambda),
+		Async.apply(performUpsert, lambda)
+	], done);
+}
 
-	const lambdaArn = context.results.lambdaArn;
-	const roleArn = context.results.roleArn;
+function readZipBuffer(lambda, done) {
+	fileSystem.readFile(lambda.zipPath(), done);
+}
 
-	const lambdaIsNew = lambdaArn === null;
+function performUpsert(lambda, zipBuffer, done) {
+	const functionArn = lambda.functionArn();
 
-	const lambdaZipBuffer = fileSystem.readFileSync(context.results.lambdaZipFilePath);
-
-	const lambdaExtension = path.extname(conanAwsLambda.filePath());
-	const fileName = path.basename(conanAwsLambda.filePath(), lambdaExtension);
-
-	const handlerName = conanAwsLambda.handler()[0];
-	const handlerString = `${fileName}.${handlerName}`;
-
-	if (lambdaIsNew) {
-		const createFunctionParameters = {
-			FunctionName: conanAwsLambda.name(),
-			Handler: handlerString,
-			Role: roleArn,
-			Description: conanAwsLambda.description(),
-			MemorySize: conanAwsLambda.memorySize(),
-			Timeout: conanAwsLambda.timeout(),
-			Runtime: conanAwsLambda.runtime(),
-			Code: {
-				ZipFile: lambdaZipBuffer
-			}
-		};
-
-		lambda.createFunction(createFunctionParameters, (createFunctionError, data) => {
-			if (createFunctionError) {
-				stepDone(createFunctionError);
-			} else {
-				stepDone(null, {
-					lambdaArn: data.FunctionArn
-				});
-			}
-		});
+	if (functionArn) {
+		updateFunction(lambda, zipBuffer, done);
 	} else {
-		const updateConfigurationParameters = {
-			FunctionName: conanAwsLambda.name(),
-			Handler: handlerString,
-			Role: roleArn,
-			Description: conanAwsLambda.description(),
-			MemorySize: conanAwsLambda.memorySize(),
-			Timeout: conanAwsLambda.timeout()
-		};
-		lambda.updateFunctionConfiguration(updateConfigurationParameters, (updateConfigurationError) => {
-			if (updateConfigurationError) {
-				stepDone(updateConfigurationError);
-			} else {
-				const updateCodeParameters = {
-					ZipFile: lambdaZipBuffer,
-					FunctionName: conanAwsLambda.name(),
-					Publish: conanAwsLambda.publish()
-				};
-				lambda.updateFunctionCode(updateCodeParameters, (updateCodeError) => {
-					if (updateCodeError) {
-						stepDone(updateCodeError);
-					} else {
-						stepDone(null, {
-							lambdaArn: lambdaArn
-						});
-					}
-				});
-			}
-		});
+		createFunction(lambda, zipBuffer, done);
 	}
+}
+
+function createFunction(lambda, zipBuffer, done) {
+	const parameters = {
+		FunctionName: lambda.name(),
+		Handler: handlerString(lambda),
+		Role: lambda.roleArn(),
+		Description: lambda.description(),
+		MemorySize: lambda.memorySize(),
+		Timeout: lambda.timeout(),
+		Runtime: lambda.runtime(),
+		Code: {
+			ZipFile: zipBuffer
+		}
+	};
+
+	lambda.lambdaClient().createFunction(parameters, (error, data) => {
+		if (error) {
+			console.log("WTF", error);
+			done(error);
+		} else {
+			lambda.functionArn(data.FunctionArn);
+			done(null);
+		}
+	});
+}
+
+function updateFunction(lambda, zipBuffer, done) {
+	Async.series([
+		Async.apply(updateFunctionConfiguration, lambda),
+		Async.apply(updateFunctionCode, lambda, zipBuffer)
+	], done);
+}
+
+function updateFunctionConfiguration(lambda, done) {
+	const updateConfigurationParameters = {
+		FunctionName: lambda.name(),
+		Handler: handlerString(lambda),
+		Role: lambda.roleArn(),
+		Description: lambda.description(),
+		MemorySize: lambda.memorySize(),
+		Timeout: lambda.timeout(),
+		Runtime: lambda.runtime()
+	};
+
+	const lambdaClient = lambda.lambdaClient();
+
+	lambdaClient.updateFunctionConfiguration(updateConfigurationParameters, done);
+}
+
+function updateFunctionCode(lambda, zipBuffer, done) {
+	const parameters = {
+		ZipFile: zipBuffer,
+		FunctionName: lambda.name(),
+		Publish: lambda.publish()
+	};
+
+	lambda.lambdaClient().updateFunctionCode(parameters, done);
+}
+
+function handlerString(lambda) {
+	const handlerPath = lambda.file().match(/[\.\/]?(.*)\..*/)[1];
+	const handlerName = lambda.handler();
+
+	return `${handlerPath}.${handlerName}`;
 }

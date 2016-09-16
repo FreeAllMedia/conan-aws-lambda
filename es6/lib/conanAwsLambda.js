@@ -7,7 +7,6 @@ import attachRolePolicy from "./steps/attachRolePolicy.js";
 import buildPackages from "./steps/buildPackages.js";
 import compileLambdaZip from "./steps/compileLambdaZip.js";
 import upsertLambda from "./steps/upsertLambda.js";
-import publishLambdaVersion from "./steps/publishLambdaVersion.js";
 import findLambdaAlias from "./steps/findLambdaAlias.js";
 import createLambdaAlias from "./steps/createLambdaAlias.js";
 import updateLambdaAlias from "./steps/updateLambdaAlias.js";
