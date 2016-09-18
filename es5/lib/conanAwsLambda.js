@@ -36,13 +36,13 @@ var _upsertLambda = require("./steps/upsertLambda.js");
 
 var _upsertLambda2 = _interopRequireDefault(_upsertLambda);
 
-var _findLambdaAlias = require("./steps/findLambdaAlias.js");
+var _findLambdaAliases = require("./steps/findLambdaAliases.js");
 
-var _findLambdaAlias2 = _interopRequireDefault(_findLambdaAlias);
+var _findLambdaAliases2 = _interopRequireDefault(_findLambdaAliases);
 
-var _createLambdaAlias = require("./steps/createLambdaAlias.js");
+var _createLambdaAliases = require("./steps/createLambdaAliases.js");
 
-var _createLambdaAlias2 = _interopRequireDefault(_createLambdaAlias);
+var _createLambdaAliases2 = _interopRequireDefault(_createLambdaAliases);
 
 var _updateLambdaAlias = require("./steps/updateLambdaAlias.js");
 
@@ -64,6 +64,10 @@ var _dependency = require("./dependency.js");
 
 var _dependency2 = _interopRequireDefault(_dependency);
 
+var _alias = require("./alias.js");
+
+var _alias2 = _interopRequireDefault(_alias);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -84,7 +88,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 	_createClass(ConanAwsLambda, [{
 		key: "initialize",
 		value: function initialize(conan, name) {
-			this.properties("name", "file", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages", "packagesDirectory", "roleArn", "functionArn", "iamClient", "lambdaClient", "version", "bucket", "handler", "zipPath");
+			this.properties("name", "file", "runtime", "role", "description", "memorySize", "timeout", "publish", "bucket", "packages", "packagesDirectory", "roleArn", "arn", "iamClient", "lambdaClient", "version", "bucket", "handler", "zipPath");
 
 			this.properties("region", "profile").then(this.updateClients);
 
@@ -106,12 +110,9 @@ var ConanAwsLambda = function (_ConanComponent) {
 			this.handler(conan.handler());
 
 			this.component("dependency", _dependency2.default).into("dependencies");
+			this.component("alias", _alias2.default).into("aliases");
 
-			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackages2.default, _compileLambdaZip2.default
-			// upsertLambda,
-			// publishLambdaVersion,
-			// findLambdaAlias,
-			// createLambdaAlias,
+			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackages2.default, _compileLambdaZip2.default, _upsertLambda2.default, _findLambdaAliases2.default, _createLambdaAliases2.default
 			// updateLambdaAlias
 			).apply(this);
 

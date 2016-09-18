@@ -23,7 +23,7 @@ describe(".findLambdaByName(conan, lambda, stepDone) (No Lambda Name)", () => {
 		(callbackError === undefined).should.be.true;
 	});
 
-	it("should not affect the .functionArn()", () => {
-		(lambda.functionArn() === null).should.be.true;
+	it("should not affect the .arn()", () => {
+		(lambda.arn() === null).should.be.true;
 	});
 });

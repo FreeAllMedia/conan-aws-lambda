@@ -7,8 +7,8 @@ import attachRolePolicy from "./steps/attachRolePolicy.js";
 import buildPackages from "./steps/buildPackages.js";
 import compileLambdaZip from "./steps/compileLambdaZip.js";
 import upsertLambda from "./steps/upsertLambda.js";
-import findLambdaAlias from "./steps/findLambdaAlias.js";
-import createLambdaAlias from "./steps/createLambdaAlias.js";
+import findLambdaAliases from "./steps/findLambdaAliases.js";
+import createLambdaAliases from "./steps/createLambdaAliases.js";
 import updateLambdaAlias from "./steps/updateLambdaAlias.js";
 import validateLambda from "./steps/validateLambda.js";
 
@@ -16,6 +16,7 @@ import AWS from "aws-sdk";
 import privateData from "incognito";
 
 import Dependency from "./dependency.js";
+import Alias from "./alias.js";
 
 export default class ConanAwsLambda extends ConanComponent {
 	initialize(conan, name) {
@@ -32,7 +33,7 @@ export default class ConanAwsLambda extends ConanComponent {
 			"packages",
 			"packagesDirectory",
 			"roleArn",
-			"functionArn",
+			"arn",
 			"iamClient",
 			"lambdaClient",
 			"version",
@@ -64,6 +65,7 @@ export default class ConanAwsLambda extends ConanComponent {
 		this.handler(conan.handler());
 
 		this.component("dependency", Dependency).into("dependencies");
+		this.component("alias", Alias).into("aliases");
 
 		conan.series(
 			validateLambda,
@@ -72,11 +74,10 @@ export default class ConanAwsLambda extends ConanComponent {
 			createRole,
 			attachRolePolicy,
 			buildPackages,
-			compileLambdaZip
-			// upsertLambda,
-			// publishLambdaVersion,
-			// findLambdaAlias,
-			// createLambdaAlias,
+			compileLambdaZip,
+			upsertLambda,
+			findLambdaAliases,
+			createLambdaAliases
 			// updateLambdaAlias
 		).apply(this);
 

@@ -1,22 +1,22 @@
 import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 import Conan from "conan";
 
-describe("conanAwsLambda.functionArn([newArn])", () => {
+describe("conanAwsLambda.arn([newArn])", () => {
 	let lambda,
-			functionArn,
+			arn,
 			conan;
 
 	beforeEach(() => {
 		conan = new Conan().use(ConanAwsLambdaPlugin);
 		conan.use(ConanAwsLambdaPlugin);
 
-		functionArn = "arn:aws:iam::123456789012:function/HelloWorld";
+		arn = "arn:aws:iam::123456789012:function/HelloWorld";
 
 		lambda = conan.lambda("SomeLambda");
 	});
 
 	it("should be settable", () => {
-		lambda.functionArn(functionArn);
-		lambda.functionArn().should.eql(functionArn);
+		lambda.arn(arn);
+		lambda.arn().should.eql(arn);
 	});
 });

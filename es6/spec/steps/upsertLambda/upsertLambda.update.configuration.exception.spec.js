@@ -25,7 +25,7 @@ describe(".upsertLambda(conan, lambda, stepDone) (Update Configuration Exception
 
 		lambda
 			.file("fixtures/handler.js")
-			.functionArn("arn:aws:lambda:us-east-1:123895237541:function:SomeFunction")
+			.arn("arn:aws:lambda:us-east-1:123895237541:function:SomeFunction")
 			.roleArn("arn:aws:lambda:us-east-1:123895237541:role:SomeRole")
 			.description("Lambda Description")
 			.memorySize(64)

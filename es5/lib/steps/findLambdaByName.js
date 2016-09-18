@@ -16,7 +16,7 @@ function findLambdaByName(conan, lambda, stepDone) {
 			} else if (error) {
 				stepDone(error);
 			} else {
-				lambda.functionArn(responseData.Configuration.FunctionArn);
+				lambda.arn(responseData.Configuration.FunctionArn);
 				stepDone();
 			}
 		});

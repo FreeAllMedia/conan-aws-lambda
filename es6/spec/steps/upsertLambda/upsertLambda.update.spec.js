@@ -9,7 +9,7 @@ import upsertLambda from "../../../lib/steps/upsertLambda.js";
 describe(".upsertLambda(conan, lambda, stepDone) (Update)", () => {
 	let conan,
 			lambda,
-			functionArn,
+			arn,
 			updateFunctionConfigurationParameters,
 			updateFunctionCodeParameters,
 			callbackError;
@@ -17,7 +17,7 @@ describe(".upsertLambda(conan, lambda, stepDone) (Update)", () => {
 	beforeEach(done => {
 		setupMocks();
 
-		functionArn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
+		arn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
 
 		conan = new Conan().use(ConanAwsLambdaPlugin)
 			.basePath(path.normalize(`${__dirname}/../../`));
@@ -26,7 +26,7 @@ describe(".upsertLambda(conan, lambda, stepDone) (Update)", () => {
 
 		lambda
 			.file("fixtures/handler.js")
-			.functionArn(functionArn)
+			.arn(arn)
 			.roleArn("arn:aws:lambda:us-east-1:123895237541:role:SomeRole")
 			.description("Lambda Description")
 			.memorySize(64)
@@ -70,8 +70,8 @@ describe(".upsertLambda(conan, lambda, stepDone) (Update)", () => {
 		});
 	});
 
-	it("should set lambda.functionArn to the returned FunctionArn", () => {
-		lambda.functionArn().should.eql(functionArn);
+	it("should set lambda.arn to the returned FunctionArn", () => {
+		lambda.arn().should.eql(arn);
 	});
 
 	function setupMocks() {

@@ -2,6 +2,7 @@ import ConanAwsLambda from "./conanAwsLambda.js";
 import AWS from "aws-sdk";
 import privateData from "incognito";
 import Dependency from "./dependency.js";
+import Alias from "./alias.js";
 
 export default class ConanAwsLambdaPlugin {
 	constructor (conan) {
@@ -14,8 +15,7 @@ export default class ConanAwsLambdaPlugin {
 			"basePath",
 			"role",
 			"bucket",
-			"handler",
-			"alias"
+			"handler"
 		);
 
 		conan.properties(
@@ -25,7 +25,9 @@ export default class ConanAwsLambdaPlugin {
 
 		conan.component("dependency", Dependency).into("dependencies");
 
-		conan.component("lambda", ConanAwsLambda).inherit("dependencies", "alias");
+		conan.component("alias", Alias).into("aliases");
+
+		conan.component("lambda", ConanAwsLambda).inherit("dependencies", "aliases");
 
 		conan
 			.region("us-east-1")

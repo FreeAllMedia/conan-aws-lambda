@@ -9,18 +9,18 @@ import upsertLambda from "../../../lib/steps/upsertLambda.js";
 describe(".upsertLambda(conan, lambda, stepDone) (Create)", () => {
 	let conan,
 			lambda,
-			functionArn,
+			arn,
 			awsParameters,
 			callbackError;
 
 	beforeEach(done => {
-		functionArn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
+		arn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
 
 		AWS.mock("Lambda", "createFunction", (parameters, callback) => {
 			awsParameters = parameters;
 
 			const responseData = {
-				FunctionArn: functionArn,
+				FunctionArn: arn,
 				Code: {}
 			};
 			callback(null, responseData);
@@ -39,6 +39,7 @@ describe(".upsertLambda(conan, lambda, stepDone) (Create)", () => {
 			.handler("invoke")
 			.timeout(300)
 			.runtime("nodejs")
+			.publish(false)
 			.zipPath(lambda.basePath() + "fixtures/lambda.zip");
 
 		upsertLambda(conan, lambda, error => {
@@ -64,13 +65,14 @@ describe(".upsertLambda(conan, lambda, stepDone) (Create)", () => {
 			MemorySize: lambda.memorySize(),
 			Timeout: lambda.timeout(),
 			Runtime: lambda.runtime(),
+			Publish: lambda.publish(),
 			Code: {
 				ZipFile: zipBuffer
 			}
 		});
 	});
 
-	it("should set lambda.functionArn to the returned FunctionArn", () => {
-		lambda.functionArn().should.eql(functionArn);
+	it("should set lambda.arn to the returned FunctionArn", () => {
+		lambda.arn().should.eql(arn);
 	});
 });

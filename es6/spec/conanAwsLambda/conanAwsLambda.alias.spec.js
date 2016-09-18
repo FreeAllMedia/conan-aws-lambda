@@ -1,24 +1,31 @@
+import Alias from "../../lib/alias.js";
 import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
 import Conan from "conan";
 
-describe("conanAwsLambda.alias([newAlias])", () => {
-	let lambda,
-			conan;
+describe("conanAwsLambda.alias([newAlias], [aliasOptions])", () => {
+	let conan,
+			name,
+			alias,
+			lambda;
 
 	beforeEach(() => {
 		conan = new Conan().use(ConanAwsLambdaPlugin);
-		conan.use(ConanAwsLambdaPlugin);
-		conan.alias("development");
-		lambda = conan.lambda("SomeLambda");
+
+		lambda = conan.lambda("HelloWorld");
+
+		name = "production";
+		alias = lambda.alias(name);
 	});
 
-	it("should copy conan's .alias()", () => {
-		lambda.alias().should.eql(conan.alias());
+	it("should create a new instance of alias", () => {
+		alias.should.be.instanceOf(Alias);
 	});
 
-	it("should be settable", () => {
-		const alias = "production";
-		lambda.alias(alias);
-		lambda.alias().should.eql(alias);
+	it("should add the new instance to .aliases", () => {
+		lambda.aliases.should.eql([alias]);
+	});
+
+	it("should copy the provided alias name to .name()", () => {
+		alias.name().should.eql(name);
 	});
 });

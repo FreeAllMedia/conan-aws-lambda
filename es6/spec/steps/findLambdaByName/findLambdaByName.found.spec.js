@@ -7,7 +7,7 @@ import findLambdaByName from "../../../lib/steps/findLambdaByName.js";
 describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 	let conan,
 			lambda,
-			functionArn,
+			arn,
 			awsParameters,
 			callbackError;
 
@@ -17,7 +17,7 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 
 			const responseData = {
 				Configuration: {
-					FunctionArn: functionArn
+					FunctionArn: arn
 				},
 				Code: {}
 			};
@@ -28,7 +28,7 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 
 		lambda = conan.lambda("NewLambda");
 
-		functionArn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
+		arn = "arn:aws:lambda:us-east-1:123895237541:function:SomeLambda";
 
 		findLambdaByName(conan, lambda, error => {
 			callbackError = error;
@@ -48,7 +48,7 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Found)", () => {
 		});
 	});
 
-	it("should set lambda.functionArn to the returned FunctionArn", () => {
-		lambda.functionArn().should.eql(functionArn);
+	it("should set lambda.arn to the returned FunctionArn", () => {
+		lambda.arn().should.eql(arn);
 	});
 });

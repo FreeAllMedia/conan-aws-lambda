@@ -13,9 +13,9 @@ function readZipBuffer(lambda, done) {
 }
 
 function performUpsert(lambda, zipBuffer, done) {
-	const functionArn = lambda.functionArn();
+	const arn = lambda.arn();
 
-	if (functionArn) {
+	if (arn) {
 		updateFunction(lambda, zipBuffer, done);
 	} else {
 		createFunction(lambda, zipBuffer, done);
@@ -31,6 +31,7 @@ function createFunction(lambda, zipBuffer, done) {
 		MemorySize: lambda.memorySize(),
 		Timeout: lambda.timeout(),
 		Runtime: lambda.runtime(),
+		Publish: lambda.publish(),
 		Code: {
 			ZipFile: zipBuffer
 		}
@@ -38,10 +39,9 @@ function createFunction(lambda, zipBuffer, done) {
 
 	lambda.lambdaClient().createFunction(parameters, (error, data) => {
 		if (error) {
-			console.log("WTF", error);
 			done(error);
 		} else {
-			lambda.functionArn(data.FunctionArn);
+			lambda.arn(data.FunctionArn);
 			done(null);
 		}
 	});

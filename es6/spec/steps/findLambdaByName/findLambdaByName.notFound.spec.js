@@ -32,7 +32,7 @@ describe(".findLambdaByName(conan, lambda, stepDone) (Not Found)", () => {
 		(callbackError === undefined).should.be.true;
 	});
 
-	it("should set lambda.functionArn to null", () => {
-		(lambda.functionArn() === null).should.be.true;
+	it("should set lambda.arn to null", () => {
+		(lambda.arn() === null).should.be.true;
 	});
 });
