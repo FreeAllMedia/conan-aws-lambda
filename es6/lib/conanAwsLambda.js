@@ -8,8 +8,7 @@ import buildPackages from "./steps/buildPackages.js";
 import compileLambdaZip from "./steps/compileLambdaZip.js";
 import upsertLambda from "./steps/upsertLambda.js";
 import findLambdaAliases from "./steps/findLambdaAliases.js";
-import createLambdaAliases from "./steps/createLambdaAliases.js";
-import updateLambdaAlias from "./steps/updateLambdaAlias.js";
+import upsertLambdaAliases from "./steps/upsertLambdaAliases.js";
 import validateLambda from "./steps/validateLambda.js";
 
 import AWS from "aws-sdk";
@@ -77,45 +76,44 @@ export default class ConanAwsLambda extends ConanComponent {
 			compileLambdaZip,
 			upsertLambda,
 			findLambdaAliases,
-			createLambdaAliases
-			// updateLambdaAlias
+			upsertLambdaAliases
 		).apply(this);
 
 		privateData(this).conan = conan;
 	}
 
-	invoke(payload, callback) {
-		const conan = privateData(this);
-
-		if (conan.config.region === undefined) {
-			const error = new Error("conan.config.region is required to use .invoke().");
-			callback(error);
-		} else {
-			const lambda = new AWS.Lambda({
-				region: conan.config.region
-			});
-
-			const parameters = {
-				FunctionName: this.name(),
-				Payload: JSON.stringify(payload)
-			};
-
-			if (this.alias().length > 0) {
-				parameters.Qualifier = this.alias();
-			}
-
-			lambda.invoke(parameters, (error, data) => {
-				if (error) {
-					callback(error);
-				} else {
-					callback(null, {
-						statusCode: data.StatusCode,
-						payload: JSON.parse(data.Payload)
-					});
-				}
-			});
-		}
-	}
+	// invoke(payload, callback) {
+	// 	const conan = privateData(this);
+	//
+	// 	if (conan.config.region === undefined) {
+	// 		const error = new Error("conan.config.region is required to use .invoke().");
+	// 		callback(error);
+	// 	} else {
+	// 		const lambda = new AWS.Lambda({
+	// 			region: conan.config.region
+	// 		});
+	//
+	// 		const parameters = {
+	// 			FunctionName: this.name(),
+	// 			Payload: JSON.stringify(payload)
+	// 		};
+	//
+	// 		if (this.alias().length > 0) {
+	// 			parameters.Qualifier = this.alias();
+	// 		}
+	//
+	// 		lambda.invoke(parameters, (error, data) => {
+	// 			if (error) {
+	// 				callback(error);
+	// 			} else {
+	// 				callback(null, {
+	// 					statusCode: data.StatusCode,
+	// 					payload: JSON.parse(data.Payload)
+	// 				});
+	// 			}
+	// 		});
+	// 	}
+	// }
 
 	updateClients() {
 		// TODO: Add coverage for the AWS.Lambda config here.

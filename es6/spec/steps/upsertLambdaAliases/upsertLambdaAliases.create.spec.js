@@ -2,9 +2,9 @@ import Conan from "conan";
 import AWS from "aws-sdk-mock";
 
 import ConanAwsLambdaPlugin from "../../../lib/conanAwsLambdaPlugin.js";
-import createLambdaAliases from "../../../lib/steps/createLambdaAliases.js";
+import upsertLambdaAliases from "../../../lib/steps/upsertLambdaAliases.js";
 
-describe(".createLambdaAliases(conan, lambda, stepDone) (Created)", () => {
+describe(".upsertLambdaAliases(conan, lambda, stepDone) (Create)", () => {
 	let conan,
 			lambda,
 			aliasArn,
@@ -20,13 +20,14 @@ describe(".createLambdaAliases(conan, lambda, stepDone) (Created)", () => {
 		lambda = conan.lambda("NewLambda");
 
 		lambda
-			.version("2")
 			.alias("development")
-			.alias("production");
+				.description("The Development Environment")
+			.alias("production")
+				.description("The Production Environment");
 
 		aliasArn = "arn:aws:lambda:us-east-1:123895237541:alias:production";
 
-		createLambdaAliases(conan, lambda, error => {
+		upsertLambdaAliases(conan, lambda, error => {
 			callbackError = error;
 			done();
 		});
@@ -35,20 +36,22 @@ describe(".createLambdaAliases(conan, lambda, stepDone) (Created)", () => {
 	afterEach(() => AWS.restore("Lambda"));
 
 	it("should not callback with an error", () => {
-		(callbackError === undefined).should.be.true;
+		(callbackError === null).should.be.true;
 	});
 
-	it("should call AWS with the correct FunctionName", () => {
+	it("should call AWS with the correct parameters", () => {
 		awsParameters.should.eql([
 			{
 				"FunctionName": lambda.name(),
-				"FunctionVersion": lambda.version(),
-				"Name": "development"
+				"FunctionVersion": "$LATEST",
+				"Name": "development",
+				"Description": "The Development Environment"
 			},
 			{
 				"FunctionName": lambda.name(),
-				"FunctionVersion": lambda.version(),
-				"Name": "production"
+				"FunctionVersion": "$LATEST",
+				"Name": "production",
+				"Description": "The Production Environment"
 			}
 		]);
 	});

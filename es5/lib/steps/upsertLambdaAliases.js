@@ -1,15 +1,22 @@
-import Async from "async";
+"use strict";
 
-export default function upsertLambdaAlias(conan, lambda, done) {
-	Async.eachSeries(
-		lambda.aliases,
-		Async.apply(upsertAlias, lambda),
-		done
-	);
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = upsertLambdaAlias;
+
+var _async = require("async");
+
+var _async2 = _interopRequireDefault(_async);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function upsertLambdaAlias(conan, lambda, done) {
+	_async2.default.eachSeries(lambda.aliases, _async2.default.apply(upsertAlias, lambda), done);
 }
 
 function upsertAlias(lambda, alias, next) {
-	const aliasExists = alias.arn() !== null;
+	var aliasExists = alias.arn() !== null;
 
 	if (aliasExists) {
 		updateAlias(lambda, alias, next);
@@ -33,7 +40,7 @@ function createAlias(lambda, alias, done) {
 		"FunctionVersion": lambda.version() || "$LATEST",
 		"Name": alias.name(),
 		"Description": alias.description()
-	}, (error, responseData) => {
+	}, function (error, responseData) {
 		if (!error) {
 			alias.arn(responseData.AliasArn);
 			done(null);

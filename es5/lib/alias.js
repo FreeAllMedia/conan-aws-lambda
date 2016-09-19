@@ -26,7 +26,7 @@ var Alias = function (_ConanComponent) {
 	_createClass(Alias, [{
 		key: "initialize",
 		value: function initialize(lambda, name) {
-			this.properties("name", "arn");
+			this.properties("name", "arn", "description");
 
 			this.name(name);
 		}

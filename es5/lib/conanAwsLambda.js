@@ -40,13 +40,9 @@ var _findLambdaAliases = require("./steps/findLambdaAliases.js");
 
 var _findLambdaAliases2 = _interopRequireDefault(_findLambdaAliases);
 
-var _createLambdaAliases = require("./steps/createLambdaAliases.js");
+var _upsertLambdaAliases = require("./steps/upsertLambdaAliases.js");
 
-var _createLambdaAliases2 = _interopRequireDefault(_createLambdaAliases);
-
-var _updateLambdaAlias = require("./steps/updateLambdaAlias.js");
-
-var _updateLambdaAlias2 = _interopRequireDefault(_updateLambdaAlias);
+var _upsertLambdaAliases2 = _interopRequireDefault(_upsertLambdaAliases);
 
 var _validateLambda = require("./steps/validateLambda.js");
 
@@ -112,9 +108,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 			this.component("dependency", _dependency2.default).into("dependencies");
 			this.component("alias", _alias2.default).into("aliases");
 
-			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackages2.default, _compileLambdaZip2.default, _upsertLambda2.default, _findLambdaAliases2.default, _createLambdaAliases2.default
-			// updateLambdaAlias
-			).apply(this);
+			conan.series(_validateLambda2.default, _findLambdaByName2.default, _findRoleByName2.default, _createRole2.default, _attachRolePolicy2.default, _buildPackages2.default, _compileLambdaZip2.default, _upsertLambda2.default, _findLambdaAliases2.default, _upsertLambdaAliases2.default).apply(this);
 
 			(0, _incognito2.default)(this).conan = conan;
 		}
