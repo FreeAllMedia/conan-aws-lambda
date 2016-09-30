@@ -115,36 +115,23 @@ var ConanAwsLambda = function (_ConanComponent) {
 	}, {
 		key: "invoke",
 		value: function invoke(payload, callback) {
-			var conan = (0, _incognito2.default)(this);
+			var parameters = {
+				FunctionName: this.name(),
+				Payload: JSON.stringify(payload),
+				InvocationType: "RequestResponse",
+				LogType: "None"
+			};
 
-			if (conan.config.region === undefined) {
-				var error = new Error("conan.config.region is required to use .invoke().");
-				callback(error);
-			} else {
-				var lambda = new _awsSdk2.default.Lambda({
-					region: conan.config.region
-				});
-
-				var parameters = {
-					FunctionName: this.name(),
-					Payload: JSON.stringify(payload)
-				};
-
-				if (this.alias().length > 0) {
-					parameters.Qualifier = this.alias();
+			this.lambdaClient().invoke(parameters, function (error, data) {
+				if (error) {
+					callback(error);
+				} else {
+					callback(null, {
+						StatusCode: data.StatusCode,
+						Payload: JSON.parse(data.Payload)
+					});
 				}
-
-				lambda.invoke(parameters, function (error, data) {
-					if (error) {
-						callback(error);
-					} else {
-						callback(null, {
-							statusCode: data.StatusCode,
-							payload: JSON.parse(data.Payload)
-						});
-					}
-				});
-			}
+			});
 		}
 	}, {
 		key: "updateClients",

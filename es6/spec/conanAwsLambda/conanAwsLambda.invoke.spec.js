@@ -1,140 +1,61 @@
+import Conan from "conan";
+import AWS from "aws-sdk-mock";
+
 import ConanAwsLambdaPlugin from "../../lib/conanAwsLambdaPlugin.js";
-import sinon from "sinon";
 
-xdescribe("lambda.invoke(payload, callback)", () => {
-	let mockConan,
+describe("conanAwsLambda.invoke(payload, callback)", () => {
+	let conan,
 			lambda,
-			lambdaName,
 			payload,
-			lambdaConstructorSpy,
+			awsParameters,
+			callbackError,
+			callbackData;
 
-			invoke,
-			invokeError,
-			invokeReturnData;
+	beforeEach(done => {
+		setupMocks();
 
-	class MockAWSLambda {
-		constructor(...options) {
-			lambdaConstructorSpy(...options);
-		}
-	}
+		conan = new Conan().use(ConanAwsLambdaPlugin);
 
-	beforeEach(() => {
-		payload = {
-			name: "Bob"
-		};
+		lambda = conan.lambda("SomeLambda");
 
-		lambdaConstructorSpy = sinon.spy();
+		payload = { hello: "world" };
 
-		const MockAWS = {
-			Lambda: MockAWSLambda
-		};
+		lambda.invoke(payload, (error, data) => {
+			callbackError = error;
+			callbackData = data;
+			done();
+		});
+	});
 
-		mockConan = {
-			config: {
-				region: "us-east-1"
-			},
-			steps: {
-				libraries: {
-					AWS: MockAWS
-				},
-				add: () => {}
-			}
-		};
+	afterEach(() => AWS.restore("Lambda"));
 
-		invokeReturnData = "";
+	it("should not callback with an error", () => {
+		(callbackError === null).should.be.true;
+	});
 
-		invoke = MockAWSLambda.prototype.invoke = sinon.spy((parameters, invokeCallback) => {
-			/* eslint-disable quotes */
-			invokeReturnData = `{"message": "Hello, World!"}`;
+	it("should callback with the invoked payload", () => {
+		callbackData.Payload.should.eql({ foo: "Woot!" });
+	});
 
-			invokeCallback(null, {
+	it("should call AWS with the correct parameters", () => {
+		awsParameters.should.eql({
+			FunctionName: lambda.name(),
+			Payload: JSON.stringify(payload),
+			InvocationType: "RequestResponse",
+			LogType: "None"
+		});
+	});
+
+	function setupMocks() {
+		AWS.mock("Lambda", "invoke", (parameters, callback) => {
+			awsParameters = parameters;
+
+			const responseData = {
 				StatusCode: 200,
-				Payload: invokeReturnData
-			});
+				Payload: JSON.stringify({ "foo": "Woot!" })
+			};
+
+			callback(null, responseData);
 		});
-
-		lambdaName = "MyLambda";
-		lambda = new ConanAwsLambda(mockConan, lambdaName);
-	});
-
-	it("should set the correct region for the lambda constructor", done => {
-		lambda.invoke(payload, () => {
-			lambdaConstructorSpy.calledWith({
-				region: mockConan.config.region
-			}).should.be.true;
-			done();
-		});
-	});
-
-	it("should call AWS Lambda with the correct parameters", done => {
-		lambda.invoke(payload, () => {
-			invoke.calledWith({
-				FunctionName: lambda.name(),
-				Payload: JSON.stringify(payload)
-			}).should.be.true;
-			done();
-		});
-	});
-
-	it("should call AWS Lambda with the correct alias if provided", done => {
-		lambda.alias("development");
-		lambda.invoke(payload, () => {
-			invoke.calledWith({
-				FunctionName: lambda.name(),
-				Qualifier: lambda.alias(),
-				Payload: JSON.stringify(payload)
-			}).should.be.true;
-			done();
-		});
-	});
-
-	describe("(When successful)", () => {
-		it("should return the status code from AWS Lambda", () => {
-			lambda.invoke(payload, (error, data) => {
-				data.statusCode.should.eql(200);
-			});
-		});
-
-		it("should return the JSON parsed payload from AWS Lambda", () => {
-			lambda.invoke(payload, (error, data) => {
-				data.payload.should.eql(JSON.parse(invokeReturnData));
-			});
-		});
-
-		// it("should return the status code from AWS Lambda", () => {
-		// 	lambda.invoke(payload, (error, data) => {
-		// 		data.statusCode.should.eql(200);
-		// 	});
-		// });
-	});
-
-	describe("(When AWS Lambda returns an error)", () => {
-
-		beforeEach(() => {
-			MockAWSLambda.prototype.invoke = sinon.spy((parameters, callback) => {
-				invokeError = new Error("Lambda invoke failed!");
-				callback(invokeError);
-			});
-		});
-
-		it("should return the error in the callback", done => {
-			lambda.invoke(payload, error => {
-				error.should.eql(invokeError);
-				done();
-			});
-		});
-	});
-
-	describe("(When region is not set on conan)", () => {
-		beforeEach(() => {
-			delete mockConan.config.region;
-		});
-
-		it("should return an error in the callback", done => {
-			lambda.invoke(payload, error => {
-				error.message.should.eql("conan.config.region is required to use .invoke().");
-				done();
-			});
-		});
-	});
+	}
 });

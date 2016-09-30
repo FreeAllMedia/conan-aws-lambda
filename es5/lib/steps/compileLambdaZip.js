@@ -68,15 +68,11 @@ function addDependencies(lambda, zip, done) {
 
 	_async2.default.mapSeries(dependencies, function (dependency, next) {
 		var basePath = dependency.basePath();
-		var globOptions = {};
-
-		if (dependency.basePath()) {
-			globOptions.cwd = dependency.basePath();
-		}
+		var globOptions = {
+			cwd: dependency.basePath()
+		};
 
 		(0, _glob2.default)(dependency.path(), globOptions, function (error, filePaths) {
-			// console.log({ path: dependency.path(), globOptions, filePaths });
-
 			filePaths.forEach(function (filePath) {
 				appendToZip(filePath, basePath, zip, dependency.zipPath());
 			});

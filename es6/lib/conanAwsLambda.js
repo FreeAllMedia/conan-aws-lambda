@@ -82,38 +82,25 @@ export default class ConanAwsLambda extends ConanComponent {
 		privateData(this).conan = conan;
 	}
 
-	// invoke(payload, callback) {
-	// 	const conan = privateData(this);
-	//
-	// 	if (conan.config.region === undefined) {
-	// 		const error = new Error("conan.config.region is required to use .invoke().");
-	// 		callback(error);
-	// 	} else {
-	// 		const lambda = new AWS.Lambda({
-	// 			region: conan.config.region
-	// 		});
-	//
-	// 		const parameters = {
-	// 			FunctionName: this.name(),
-	// 			Payload: JSON.stringify(payload)
-	// 		};
-	//
-	// 		if (this.alias().length > 0) {
-	// 			parameters.Qualifier = this.alias();
-	// 		}
-	//
-	// 		lambda.invoke(parameters, (error, data) => {
-	// 			if (error) {
-	// 				callback(error);
-	// 			} else {
-	// 				callback(null, {
-	// 					statusCode: data.StatusCode,
-	// 					payload: JSON.parse(data.Payload)
-	// 				});
-	// 			}
-	// 		});
-	// 	}
-	// }
+	invoke(payload, callback) {
+		const parameters = {
+			FunctionName: this.name(),
+			Payload: JSON.stringify(payload),
+			InvocationType: "RequestResponse",
+			LogType: "None"
+		};
+
+		this.lambdaClient().invoke(parameters, (error, data) => {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, {
+					StatusCode: data.StatusCode,
+					Payload: JSON.parse(data.Payload)
+				});
+			}
+		});
+	}
 
 	updateClients() {
 		// TODO: Add coverage for the AWS.Lambda config here.
