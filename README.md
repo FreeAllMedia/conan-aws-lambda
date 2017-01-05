@@ -17,15 +17,15 @@ new Conan().use(ConanAwsLambda)
 
 .profile("deployment")
 .basePath(__dirname) // defaults to process.cwd()
-
 .role("LambdaRoleName")
-	.lambda("HelloWorld")
-		.description("A simple 'Hello, World!' example!")
-		.filePath(`helloWorld.js`)
 
-	.lambda("HelloUniverse")
-		.description("A simple 'Hello, Universe!' example!")
-		.filePath(`helloUniverse.js`)
+.lambda("HelloWorld")
+	.description("A simple 'Hello, World!' example!")
+	.file(`helloWorld.js`)
+
+.lambda("HelloUniverse")
+	.description("A simple 'Hello, Universe!' example!")
+	.file(`helloUniverse.js`)
 
 .deploy(error => {
 	if (error) { throw error; }

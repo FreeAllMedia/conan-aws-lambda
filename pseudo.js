@@ -5,28 +5,28 @@ new Conan().use(ConanAwsLambda)
 
 .region("us-east-1")
 
-.handler("invoke")
-
-.packages({
-	async: "^1.0.0"
-})
-
-.alias("development")
-
-.lambda("HelloWorld")
-	.file("./functions/helloWorld.js")
+.awsLambda
+	.handler("invoke")
 	.packages({
-		something: "^2.0.1"
+		async: "^1.0.0"
 	})
-	.dependency("./lib/**/*")
-		.zipPath("blah")
-	.dependency("./stuff/**/*")
-		.zipPath("blah")
+	.alias("development")
+	.role("")
 
-.lambda("HelloPanda")
-	.file("./functions/helloPanda.js")
-	.handler("start")
-	.alias("production")
+	.lambda("HelloWorld")
+		.file("./functions/helloWorld.js")
+		.packages({
+			something: "^2.0.1"
+		})
+		.dependency("./lib/**/*")
+			.zipPath("blah")
+		.dependency("./stuff/**/*")
+			.zipPath("blah")
 
-.lambda("HelloPanda")
-	.file("./functions/helloPanda.js");
+	.lambda("HelloPanda")
+		.file("./functions/helloPanda.js")
+		.handler("start")
+		.alias("production")
+
+	.lambda("HelloPanda")
+		.file("./functions/helloPanda.js");

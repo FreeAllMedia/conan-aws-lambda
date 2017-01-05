@@ -1,4 +1,4 @@
-import flowsync from "flowsync";
+import Async from "async";
 
 export default function updateLambdaAlias(conan, context, stepDone) {
 	const AWS = context.libraries.AWS;
@@ -8,7 +8,7 @@ export default function updateLambdaAlias(conan, context, stepDone) {
 
 	const aliases = context.parameters.alias();
 	const result = context.results.aliases;
-	flowsync.eachSeries(aliases,
+	Async.eachSeries(aliases,
 		(alias, next) => {
 			const aliasName = alias[0];
 			let aliasVersion;

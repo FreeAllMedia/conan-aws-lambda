@@ -48,11 +48,9 @@
   },
   "homepage": "https://github.com/FreeAllMedia/conan-aws-lambda",
   "dependencies": {
-    "akiro": "0.0.3",
     "archiver": "^0.21.0",
     "aws-sdk": "^2.2.24",
     "conan": "0.0.24",
-    "flowsync": "^0.1.12",
     "fs-extra": "^0.26.5",
     "glob": "^7.0.0",
     "graceful-fs": "^4.1.3",
