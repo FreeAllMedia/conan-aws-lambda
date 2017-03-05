@@ -36,8 +36,6 @@ var _hacher2 = _interopRequireDefault(_hacher);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // graceful-fs required to avoid file table overflow
-
-
 function relativePath(fullPath, basePath) {
 	var normalizedFullPath = _path2.default.normalize(fullPath);
 
@@ -76,9 +74,9 @@ function compileLambdaZipStep(conan, context, stepDone) {
 
 		lambdaZip.append(lambdaReadStream, { name: lambdaFileName });
 	} else {
-		var lambdaFilePath = relativePath(conanAwsLambda.filePath(), conan.config.basePath);
+		var _lambdaFilePath = relativePath(conanAwsLambda.filePath(), conan.config.basePath);
 
-		var conanHandlerContent = "module.exports = {\n\t" + handlerName + ": require(\"./" + lambdaFilePath + "\")." + handlerName + "\n};\n";
+		var conanHandlerContent = "module.exports = {\n\t" + handlerName + ": require(\"./" + _lambdaFilePath + "\")." + handlerName + "\n};\n";
 
 		var conanHandlerFileName = "conanHandler-" + _hacher2.default.getUUID() + ".js";
 

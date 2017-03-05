@@ -46,7 +46,7 @@ export default class ConanAwsLambda extends ConanComponent {
 		this.name(name);
 
 		this.handler("handler");
-		this.runtime("nodejs");
+		this.runtime("nodejs4.3");
 		this.memorySize(128);
 		this.timeout(3);
 

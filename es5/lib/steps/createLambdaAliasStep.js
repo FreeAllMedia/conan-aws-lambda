@@ -21,14 +21,14 @@ function createLambdaAliasStep(conan, context, stepDone) {
 	var result = {};
 	_flowsync2.default.eachSeries(aliases, function (alias, next) {
 		var aliasName = alias[0];
-		var aliasVersion = undefined;
+		var aliasVersion = void 0;
 		if (alias.length > 1) {
 			aliasVersion = alias[1];
 		} else {
 			aliasVersion = "$LATEST";
 		}
 
-		var aliasExists = undefined;
+		var aliasExists = void 0;
 		if (context.results.aliases) {
 			aliasExists = context.results.aliases[aliasName];
 		}
