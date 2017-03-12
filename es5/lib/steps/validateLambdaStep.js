@@ -10,8 +10,8 @@ function validateLambdaStep(conan, context, stepDone) {
 		var error = new Error(".role() is a required parameter for a lambda.");
 		stepDone(error);
 	} else if (conanAwsLambda.packages() !== undefined && conan.config.bucket === undefined) {
-		var error = new Error("conan.config.bucket is required to use .packages().");
-		stepDone(error);
+		var _error = new Error("conan.config.bucket is required to use .packages().");
+		stepDone(_error);
 	} else {
 		stepDone();
 	}

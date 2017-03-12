@@ -111,8 +111,8 @@ describe("ConanAwsLambda(conan, name)", () => {
 			lambda = new ConanAwsLambda(conan, name, filePath);
 			lambda.handler().should.eql(["handler"]);
 		});
-		it("should set the runtime to 'nodejs' by default", () => {
-			lambda.runtime().should.eql("nodejs");
+		it("should set the runtime to 'nodejs4.3' by default", () => {
+			lambda.runtime().should.eql("nodejs4.3");
 		});
 		it("should set the memorySize to '128' by default", () => {
 			lambda.memorySize().should.eql(128);

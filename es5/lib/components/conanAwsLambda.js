@@ -70,7 +70,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 	function ConanAwsLambda() {
 		_classCallCheck(this, ConanAwsLambda);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(ConanAwsLambda).apply(this, arguments));
+		return _possibleConstructorReturn(this, (ConanAwsLambda.__proto__ || Object.getPrototypeOf(ConanAwsLambda)).apply(this, arguments));
 	}
 
 	_createClass(ConanAwsLambda, [{
@@ -91,7 +91,7 @@ var ConanAwsLambda = function (_ConanComponent) {
 			this.name(name);
 
 			this.handler("handler");
-			this.runtime("nodejs");
+			this.runtime("nodejs4.3");
 			this.memorySize(128);
 			this.timeout(3);
 

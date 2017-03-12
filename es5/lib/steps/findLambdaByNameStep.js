@@ -9,7 +9,7 @@ function findLambdaByNameStep(conan, context, stepDone) {
 	var lambda = new AWS.Lambda({
 		region: conan.config.region
 	});
-	var lambdaName = undefined;
+	var lambdaName = void 0;
 	if (typeof context.parameters.name === "function") {
 		lambdaName = context.parameters.name();
 	} else {
